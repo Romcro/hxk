@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Press kit 2026 de Haskouil × Krousti, duo d'humour : chiffres, formats, collabs et contact.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>HXK en direct</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout : une page de live (lecteur + chat à droite, panneaux d'info dessous). Le lecteur porte les overlays, le chat déroule le press kit message par message. */
+:root {
+  --bg: #141414;
+  --surface: #1f1f1f;
+  --surface-2: #292929;
+  --line: #3b3b3b;
+  --ink: #ffffff;
+  --ink-dim: #b3b3b3;
+  --hot: #f4c400;
+  --gold: #f4c400;
+  --mint: #5ce1e6;
+  --font-display: "Archivo Black", "Arial Black", Impact, sans-serif;
+  --font-body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px 40px;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.page { max-width: 1280px; margin: 0 auto; display: grid; gap: 16px; }
+
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.logo { font-family: var(--font-display); font-size: 20px; letter-spacing: .01em; }
+.logo em { font-style: normal; color: var(--hot); }
+.demo-note { font-size: 13px; color: var(--ink-dim); }
+
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+
+/* Lecteur */
+.player {
+  position: relative; aspect-ratio: 16 / 9; max-width: 100%; overflow: hidden; border-radius: 6px;
+  background: #0a0b0e; container-type: inline-size;
+}
+.scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ov { position: absolute; z-index: 2; }
+.live-badge {
+  top: 3cqw; left: 3cqw; display: flex; gap: 1.2cqw; align-items: center;
+  font-family: var(--font-display); font-size: max(11px, 1.7cqw); letter-spacing: .04em;
+}
+.live-badge .dot { background: var(--hot); color: #141414; padding: .4cqw 1.1cqw; border-radius: 4px; display: flex; gap: .8cqw; align-items: center; }
+.live-badge .dot::before { content: ""; width: 1cqw; height: 1cqw; min-width: 7px; min-height: 7px; border-radius: 50%; background: #cc0000; animation: blink 1.2s infinite; }
+.live-badge .sched { background: rgba(0, 0, 0, .65); padding: .4cqw 1.1cqw; border-radius: 4px; font-family: var(--font-body); font-weight: 600; }
+@keyframes blink { 50% { opacity: .2; } }
+
+.sponsor-slot {
+  top: 3cqw; right: 3cqw; width: 24cqw; padding: 1cqw 1.4cqw; border-radius: 6px;
+  background: rgba(0, 0, 0, .7); border: 2px dashed rgba(244, 196, 0, .8);
+  font-size: max(10px, 1.45cqw); line-height: 1.25;
+}
+.sponsor-slot small { display: block; color: var(--gold); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: max(9px, 1.15cqw); }
+.sponsor-slot b { display: block; font-family: var(--font-display); font-weight: 400; font-size: max(13px, 2.2cqw); }
+
+.alert {
+  top: 18%; left: 50%; transform: translateX(-50%);
+  min-width: 46cqw; max-width: 80cqw; text-align: center; padding: 1.8cqw 3cqw; border-radius: 10px;
+  background: var(--gold); color: #141414; box-shadow: 0 1cqw 3cqw rgba(0, 0, 0, .5);
+}
+.alert small { display: block; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; font-size: max(10px, 1.4cqw); }
+.alert b { display: block; font-family: var(--font-display); font-weight: 400; font-size: max(17px, 3.6cqw); line-height: 1.05; margin-top: .4cqw; }
+.alert span { display: block; font-weight: 600; font-size: max(11px, 1.6cqw); margin-top: .4cqw; }
+.alert.show { animation: pop 4.2s both; }
+@keyframes pop {
+  0% { transform: translate(-50%, -30px) scale(.8); opacity: 0; }
+  8% { transform: translate(-50%, 0) scale(1.06); opacity: 1; }
+  12% { transform: translate(-50%, 0) scale(1); }
+  88% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -16px) scale(.96); }
+}
+
+.lower {
+  left: 3cqw; bottom: 9cqw; display: flex; align-items: stretch; border-radius: 6px; overflow: hidden;
+  box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, .45); max-width: 70cqw;
+}
+.lower .k { background: var(--hot); color: #141414; font-family: var(--font-display); font-size: max(18px, 4.4cqw); line-height: 1; padding: 1.2cqw 1.8cqw; display: flex; align-items: center; font-variant-numeric: tabular-nums; }
+.lower .l { background: rgba(20, 20, 20, .92); padding: 1cqw 1.8cqw; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.lower .l small { color: var(--gold); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; font-size: max(9px, 1.2cqw); }
+.lower .l span { font-weight: 600; font-size: max(11px, 1.8cqw); }
+.lower.swap { animation: swap .5s ease-out; }
+@keyframes swap { from { transform: translateX(-12px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.ticker {
+  left: 0; right: 0; bottom: 0; height: 6cqw; min-height: 24px; display: flex; align-items: center; overflow: hidden;
+  background: rgba(0, 0, 0, .78); border-top: 2px solid var(--hot);
+}
+.ticker .tag { position: relative; z-index: 1; flex: none; height: 100%; display: flex; align-items: center; padding: 0 1.6cqw; background: var(--hot); color: #141414; font-family: var(--font-display); font-size: max(10px, 1.6cqw); }
+.ticker .track { display: flex; white-space: nowrap; animation: scroll 60s linear infinite; }
+.ticker .track span { padding: 0 2.4cqw; font-family: var(--font-mono); font-weight: 500; font-size: max(10px, 1.6cqw); }
+.ticker .track span b { color: var(--gold); font-weight: 700; }
+@keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Infos sous le lecteur */
+.stream-info { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; }
+.avatar {
+  width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
+  background: linear-gradient(135deg, var(--hot) 0 50%, var(--ink) 50%); color: #141414;
+  font-family: var(--font-display); font-size: 18px; border: 3px solid var(--hot);
+}
+.stream-info h1 { font-family: var(--font-display); font-weight: 400; font-size: 20px; margin: 0; line-height: 1.15; }
+.stream-info .t { margin: 2px 0 6px; font-weight: 500; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tags span { background: var(--surface-2); border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; color: var(--ink-dim); }
+.follow {
+  background: var(--hot); color: #141414; border: 0; border-radius: 6px; padding: 9px 14px;
+  font-weight: 700; display: flex; gap: 8px; align-items: center; white-space: nowrap;
+}
+.follow:hover { filter: brightness(1.1); }
+
+/* Chat */
+.chat {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  display: flex; flex-direction: column; height: min(640px, calc(100vh - 40px)); min-height: 360px;
+}
+.chat-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); gap: 8px; }
+.chat-head strong { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+.chat-head button { background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: 600; }
+.pin { margin: 10px 10px 0; padding: 10px 12px; background: var(--surface-2); border-left: 3px solid var(--gold); border-radius: 4px; font-size: 13px; }
+.pin small { display: block; color: var(--gold); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: 11px; }
+.msgs { flex: 1; overflow-y: auto; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; overscroll-behavior: contain; min-height: 0; }
+.msg { font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; animation: in .25s ease-out; }
+@keyframes in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.msg .u { font-weight: 700; }
+.msg .badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 0 4px; border-radius: 3px; margin-right: 4px; vertical-align: 2px; color: #141414; }
+.msg b { color: var(--gold); font-weight: 700; }
+.msg.event { background: var(--surface-2); border-radius: 4px; padding: 6px 8px; border-left: 3px solid var(--mint); }
+.chat-foot { padding: 10px 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-dim); }
+
+/* Panneaux */
+.panels-title { font-family: var(--font-display); font-weight: 400; font-size: 18px; margin: 8px 0 0; }
+.panels { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 12px; align-items: start; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; min-width: 0; }
+.panel h2 { margin: 0; padding: 10px 14px; font-family: var(--font-display); font-weight: 400; font-size: 15px; letter-spacing: .02em; background: var(--surface-2); border-bottom: 2px solid var(--hot); }
+.panel .body { padding: 12px 14px 14px; }
+.panel p { margin: 0 0 8px; color: var(--ink-dim); }
+.panel p strong { color: var(--ink); font-weight: 600; }
+.panel dl { margin: 0; }
+.panel dl div { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.panel dl div:last-child { border-bottom: 0; }
+.panel dt { color: var(--ink-dim); font-size: 14px; }
+.panel dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.panel h3 { margin: 12px 0 2px; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+.panel h3:first-child { margin-top: 0; }
+.days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin: 4px 0 8px; }
+.days span { text-align: center; padding: 8px 0; border-radius: 4px; background: var(--surface-2); font-weight: 700; font-size: 13px; color: var(--ink-dim); }
+.days span.on { background: var(--hot); color: #141414; }
+.brands { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; }
+.brands li { border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; font-weight: 700; }
+.mail { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.mail code { font-family: var(--font-mono); font-weight: 700; font-size: 15px; background: var(--surface-2); padding: 6px 10px; border-radius: 4px; user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
+.mail button { background: var(--gold); color: #141414; border: 0; border-radius: 4px; padding: 6px 12px; font-weight: 700; }
+.panel a { color: var(--gold); }
+.src { color: var(--ink-dim); font-size: 13px; margin: 0; }
+
+@media (max-width: 960px) {
+  .main { grid-template-columns: minmax(0, 1fr); }
+  .chat { height: 380px; min-height: 0; }
+}
+@media (max-width: 560px) {
+  .stream-info { grid-template-columns: auto minmax(0, 1fr); }
+  .follow { grid-column: 1 / -1; justify-content: center; }
+  .sponsor-slot, .live-badge .sched { display: none; }
+  .lower { bottom: 10cqw; max-width: 86cqw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker .track { animation: none; }
+  .alert.show { animation: none; }
+  .msg, .lower.swap { animation: none; }
+  .live-badge .dot::before { animation: none; }
+}
+</style>
+</head>
+<body>
+
+
+<div class="page">
+  <div class="top">
+    <div class="logo">HXK <em>●</em> en direct</div>
+    <div class="demo-note">Live simulé : chaque message et chaque overlay est une donnée du press kit 2026.</div>
+  </div>
+
+  <div class="main">
+    <div style="display: grid; gap: 14px; min-width: 0;">
+      <div class="player" id="player">
+        <canvas class="scene" id="scene" aria-hidden="true"></canvas>
+
+        <div class="ov live-badge"><span class="dot">EN DIRECT</span><span class="sched">Lun · Mer · Jeu · 20h30</span></div>
+
+        <div class="ov sponsor-slot" id="slot">
+          <small>Emplacement sponsor</small>
+          <b>Ta marque ici</b>
+          <span>Exemple de placement à l'écran</span>
+        </div>
+
+        <div class="ov alert" id="alert" hidden><small id="aK"></small><b id="aT"></b><span id="aS"></span></div>
+
+        <div class="ov lower" id="lower"><div class="k" id="lK">447K</div><div class="l"><small id="lS">Le duo</small><span id="lT">abonnés cumulés sur 4 plateformes</span></div></div>
+
+        <div class="ov ticker" aria-hidden="true">
+          <div class="tag">HXK</div>
+          <div class="track" id="track"></div>
+        </div>
+      </div>
+
+      <div class="stream-info">
+        <div class="avatar" aria-hidden="true">HK</div>
+        <div style="min-width: 0;">
+          <h1>Haskouil × Krousti</h1>
+          <p class="t">« On teste les idées les plus stupides, jusqu'à ce que ça dégénère »</p>
+          <div class="tags"><span>Humour</span><span>Gaming</span><span>Cuisine</span><span>Français</span></div>
+        </div>
+        <button class="follow" type="button" id="toContact">♥ Faire une collab</button>
+      </div>
+    </div>
+
+    <aside class="chat" aria-label="Chat du live">
+      <div class="chat-head"><strong>Chat du stream</strong><button type="button" id="pause" aria-pressed="false">Pause</button></div>
+      <div class="pin"><small>Message épinglé</small>Duo d'humour, amis depuis 15 ans. <b style="color: var(--gold)">447K</b> abonnés cumulés sur TikTok, Instagram, YouTube et Twitch.</div>
+      <div class="msgs" id="msgs" aria-live="off"></div>
+      <div class="chat-foot">Chat simulé : il déroule le press kit en boucle.</div>
+    </aside>
+  </div>
+
+  <h2 class="panels-title">À propos de Haskouil × Krousti</h2>
+  <div class="panels">
+    <section class="panel"><h2>Le duo</h2><div class="body">
+      <p><strong>Nael (Haskouil)</strong> : impulsion, énergie, présence à l'écran, improvisation et aisance IRL. Il porte l'intégration à l'écran, en live et en IRL.</p>
+      <p><strong>Luka (Krousti)</strong> : rythme, construction comique, punchlines, recul créatif et structure. Il écrit et scénarise l'intégration pour qu'elle ne casse pas le contenu.</p>
+      <p>L'un impulse, l'autre construit. Audience : 25-34 ans en majorité, puis 18-24 ans, puis 13-17 ans.</p>
+    </div></section>
+
+    <section class="panel"><h2>Planning des lives</h2><div class="body">
+      <div class="days" aria-label="Lundi, mercredi et jeudi"><span class="on">L</span><span>M</span><span class="on">M</span><span class="on">J</span><span>V</span><span>S</span><span>D</span></div>
+      <p><strong>Lundi, mercredi et jeudi à 20h30</strong>, dont le format cuisine « Toque &amp; Tablier ».</p>
+      <dl>
+        <div><dt>Abonnés Twitch</dt><dd>11,7K</dd></div>
+        <div><dt>Viewers moyens</dt><dd>80 à 100</dd></div>
+        <div><dt>Vues live / mois</dt><dd>~13K</dd></div>
+        <div><dt>Spectateurs uniques / mois</dt><dd>5 à 8K</dd></div>
+        <div><dt>Chatteurs</dt><dd>200 à 400</dd></div>
+        <div><dt>Minutes regardées / mois</dt><dd>~155K</dd></div>
+      </dl>
+    </div></section>
+
+    <section class="panel"><h2>Les autres plateformes</h2><div class="body">
+      <h3>TikTok · 314K abonnés</h3>
+      <dl>
+        <div><dt>Likes cumulés</dt><dd>8,7M</dd></div>
+        <div><dt>Vues / 28 jours</dt><dd>380K</dd></div>
+        <div><dt>Nouveaux spectateurs / 28 jours</dt><dd>63,6K</dd></div>
+        <div><dt>Partages / 28 jours</dt><dd>4,5K</dd></div>
+        <div><dt>18-24 ans</dt><dd>45 %</dd></div>
+      </dl>
+      <h3>Instagram · 71,3K abonnés</h3>
+      <dl>
+        <div><dt>Vues / mois</dt><dd>1 à 2M</dd></div>
+        <div><dt>Non-abonnés touchés</dt><dd>78 %</dd></div>
+        <div><dt>Interactions / 30 jours</dt><dd>152K</dd></div>
+        <div><dt>25-34 ans</dt><dd>46 %</dd></div>
+      </dl>
+      <h3>YouTube · 50,1K abonnés</h3>
+      <dl>
+        <div><dt>Vues / 28 jours</dt><dd>550K</dd></div>
+        <div><dt>Spectateurs uniques</dt><dd>160K</dd></div>
+        <div><dt>Spectateurs réguliers</dt><dd>38 %</dd></div>
+        <div><dt>Heures de visionnage (sept. 2026)</dt><dd>20,2K</dd></div>
+      </dl>
+    </div></section>
+
+    <section class="panel"><h2>Formats</h2><div class="body">
+      <h3>Podcast Histoires Reddit</h3>
+      <p>YouTube long + vertical. 2 épisodes : <strong>+30K vues YouTube</strong>, <strong>+2M vues verticales</strong>, <strong>40 min</strong> de visionnage moyen sur 2h+. 56 % d'hommes, 44 % de femmes.</p>
+      <h3>Gaming éditorialisé</h3>
+      <p>YouTube long + vertical. <strong>+530K vues</strong> sur 3 vidéos, dont 446K sur un épisode. 75 % d'hommes.</p>
+      <h3>Vertical</h3>
+      <p>TikTok, Reels, Shorts. Sketch « jetlag » <strong>3,1M</strong> de vues, clip « permis » <strong>2M</strong>, extrait Reddit <strong>403K</strong>.</p>
+      <h3>IRL</h3>
+      <p>Activités pour Instagram et YouTube, dont Battle Kart.</p>
+    </div></section>
+
+    <section class="panel"><h2>Palmarès</h2><div class="body">
+      <h3>ZEvent · 4 au 6 sept. 2026</h3>
+      <dl>
+        <div><dt>Viewers moyens</dt><dd>170</dd></div>
+        <div><dt>Pic</dt><dd>298</dd></div>
+        <div><dt>Spectateurs uniques</dt><dd>+48 000</dd></div>
+        <div><dt>Récoltés</dt><dd>près de 17K€</dd></div>
+      </dl>
+      <h3>Battle Kart · 12 oct. 2026</h3>
+      <p>Victoire à la course des régions organisée par Battle Kart, déjà partenaire du duo. <a href="https://www.instagram.com/p/DePopqyAWar/" target="_blank" rel="noopener">Voir le post</a></p>
+    </div></section>
+
+    <section class="panel" id="contact"><h2>Partenaires et contact</h2><div class="body">
+      <h3>Ils ont déjà fait équipe avec nous</h3>
+      <ul class="brands"><li>HelloFresh</li><li>Kqueo</li><li>Battle Kart</li><li>Xsolla</li><li>Holy</li><li>Razer</li></ul>
+      <h3>Studio</h3>
+      <p>Installé depuis 2026 dans les locaux du Phoenix : un espace pour créer, tourner et streamer.</p>
+      <h3>Écris-leur</h3>
+      <div class="mail"><code>haskouilpro@outlook.fr</code><button type="button" id="copy">Copier</button></div>
+    </div></section>
+  </div>
+  <p class="src">Chiffres : press kit 2026 du duo.</p>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------- Bandeau défilant ----------
+  const TICK = [
+    ["TikTok", "314K abonnés"], ["Instagram", "71,3K abonnés"], ["YouTube", "50,1K abonnés"], ["Twitch", "11,7K abonnés"],
+    ["Sketch « jetlag »", "3,1M vues"], ["Clip « permis »", "2M vues"], ["Podcast Reddit", "40 min de visionnage moyen"],
+    ["Instagram", "78 % de non-abonnés touchés"], ["ZEvent", "près de 17K€ récoltés"], ["Battle Kart", "victoire le 12 oct. 2026"]
+  ];
+  const once = TICK.map(([a, b]) => `<span>${a} <b>${b}</b></span>`).join("");
+  $("track").innerHTML = once + once;
+
+  // ---------- Lower third ----------
+  const LOWER = [
+    ["447K", "Le duo", "abonnés cumulés sur 4 plateformes"],
+    ["8,7M", "TikTok", "likes cumulés"],
+    ["78 %", "Instagram", "de non-abonnés touchés"],
+    ["160K", "YouTube", "spectateurs uniques"],
+    ["40 min", "Podcast Histoires Reddit", "de visionnage moyen sur 2h+"],
+    ["446K", "Gaming éditorialisé", "vues sur un seul épisode"],
+    ["~155K", "Twitch", "minutes regardées par mois"],
+    ["+48 000", "ZEvent 2026", "spectateurs uniques"]
+  ];
+  let li = 0;
+  function nextLower() {
+    li = (li + 1) % LOWER.length;
+    const [k, s, t] = LOWER[li];
+    $("lK").textContent = k; $("lS").textContent = s; $("lT").textContent = t;
+    const el = $("lower"); el.classList.remove("swap"); void el.offsetWidth; el.classList.add("swap");
+  }
+
+  // ---------- Alertes ----------
+  const ALERTS = [
+    ["Nouveau sponsor", "Ta marque ici", "Exemple d'alerte à l'écran pendant le live"],
+    ["Partenaire passé", "Razer", "Ils ont déjà fait équipe avec le duo"],
+    ["Record", "Sketch « jetlag »", "3,1M de vues en vertical"],
+    ["Partenaire passé", "HelloFresh", "Ils ont déjà fait équipe avec le duo"],
+    ["ZEvent 2026", "Près de 17K€ récoltés", "Pic à 298 viewers, +48 000 spectateurs uniques"],
+    ["Partenaire passé", "Holy", "Ils ont déjà fait équipe avec le duo"],
+    ["Victoire", "Battle Kart", "Course des régions, 12 octobre 2026"],
+    ["Partenaire passé", "Xsolla", "Ils ont déjà fait équipe avec le duo"],
+    ["Nouveau sponsor", "Ta marque ici", "Exemple d'alerte à l'écran pendant le live"],
+    ["Partenaire passé", "Kqueo", "Ils ont déjà fait équipe avec le duo"]
+  ];
+  let ai = -1, alertTimer = 0;
+  function nextAlert() {
+    ai = (ai + 1) % ALERTS.length;
+    const [k, t, s] = ALERTS[ai];
+    $("aK").textContent = k; $("aT").textContent = t; $("aS").textContent = s;
+    const el = $("alert"); el.hidden = false;
+    el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
+    clearTimeout(alertTimer);
+    alertTimer = setTimeout(() => el.hidden = true, 4200);
+  }
+
+  // ---------- Chat ----------
+  // Pseudos = rubriques du press kit, pas de vrais spectateurs.
+  const U = {
+    mod: ["hxk_modo", "#f4c400", "MOD"],
+    tiktok: ["stats_tiktok", "#5ce1e6"],
+    insta: ["stats_insta", "#ff347c"],
+    yt: ["stats_youtube", "#ff3b3b"],
+    twitch: ["stats_twitch", "#a56bff"],
+    formats: ["les_formats", "#ffd819"],
+    palmares: ["palmares_hxk", "#efefef"],
+    nael: ["haskouil", "#ff347c", "NAEL"],
+    luka: ["krousti", "#5ce1e6", "LUKA"]
+  };
+  const CHAT = [
+    ["mod", "Bienvenue sur le live ! Ce chat te fait le tour du press kit 2026 de Haskouil × Krousti."],
+    ["nael", "« On teste les idées les plus stupides, jusqu'à ce que ça dégénère »"],
+    ["luka", "L'un impulse, l'autre construit."],
+    ["mod", "Nael porte l'intégration à l'écran, en live et en IRL. Luka l'écrit et la scénarise pour qu'elle ne casse pas le contenu."],
+    ["tiktok", "<b>314K</b> abonnés et <b>8,7M</b> de likes cumulés"],
+    ["tiktok", "<b>380K</b> vues, <b>63,6K</b> nouveaux spectateurs et <b>4,5K</b> partages sur 28 jours"],
+    ["tiktok", "<b>45 %</b> de l'audience a 18-24 ans"],
+    ["event", "Alerte : le sketch « jetlag » passe les <b>3,1M</b> de vues en vertical"],
+    ["insta", "<b>71,3K</b> abonnés, <b>1 à 2M</b> de vues par mois"],
+    ["insta", "<b>78 %</b> de non-abonnés touchés : le contenu sort de la communauté"],
+    ["insta", "<b>152K</b> interactions sur 30 jours, <b>46 %</b> de 25-34 ans"],
+    ["yt", "<b>50,1K</b> abonnés, <b>550K</b> vues sur 28 jours"],
+    ["yt", "<b>160K</b> spectateurs uniques, dont <b>38 %</b> de réguliers"],
+    ["yt", "<b>20,2K</b> heures de visionnage en septembre 2026"],
+    ["formats", "Podcast Histoires Reddit : <b>40 min</b> de visionnage moyen sur des épisodes de 2h+"],
+    ["formats", "Podcast Reddit : <b>+2M</b> vues verticales, <b>+30K</b> vues YouTube sur 2 épisodes. 44 % de femmes"],
+    ["formats", "Gaming éditorialisé : <b>+530K</b> vues sur 3 vidéos, dont <b>446K</b> sur un épisode"],
+    ["formats", "Vertical : clip « permis » <b>2M</b>, extrait Reddit <b>403K</b>"],
+    ["mod", "Le live sert de test, YouTube raconte, le vertical décline : une collab peut vivre sur trois plateformes."],
+    ["twitch", "<b>11,7K</b> abonnés, <b>80 à 100</b> viewers en moyenne"],
+    ["twitch", "<b>5 à 8K</b> spectateurs uniques et <b>~155K</b> minutes regardées par mois"],
+    ["twitch", "<b>200 à 400</b> chatteurs. Lives lundi, mercredi et jeudi à 20h30"],
+    ["event", "Emplacement sponsor : <b>ta marque ici</b> (exemple)"],
+    ["palmares", "ZEvent du 4 au 6 sept. 2026 : <b>170</b> viewers moyens, pic à <b>298</b>"],
+    ["palmares", "ZEvent : <b>+48 000</b> spectateurs uniques, près de <b>17K€</b> récoltés"],
+    ["palmares", "12 oct. 2026 : victoire à la course des régions organisée par <b>Battle Kart</b>"],
+    ["mod", "Ils ont déjà fait équipe avec le duo : HelloFresh, Kqueo, Battle Kart, Xsolla, Holy, Razer"],
+    ["mod", "Studio installé au Phoenix depuis 2026, pour créer, tourner et streamer"],
+    ["mod", "Pour une collab : <b>haskouilpro@outlook.fr</b>"]
+  ];
+  const msgs = $("msgs");
+  let ci = 0, paused = false;
+  function addMsg() {
+    const [who, text] = CHAT[ci];
+    ci = (ci + 1) % CHAT.length;
+    const d = document.createElement("div");
+    if (who === "event") {
+      d.className = "msg event"; d.innerHTML = text;
+    } else {
+      const [name, color, badge] = U[who];
+      d.className = "msg";
+      d.innerHTML = `${badge ? `<span class="badge" style="background:${color}">${badge}</span>` : ""}<span class="u" style="color:${color}">${name}</span> : ${text}`;
+    }
+    const atBottom = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 40;
+    msgs.appendChild(d);
+    while (msgs.children.length > 60) msgs.removeChild(msgs.firstChild);
+    if (atBottom) msgs.scrollTop = msgs.scrollHeight;
+  }
+  for (let i = 0; i < 6; i++) addMsg();
+
+  // ---------- Boucles ----------
+  let tick = 0;
+  setInterval(() => {
+    if (paused) return;
+    tick++;
+    addMsg();
+    if (tick % 2 === 0) nextLower();
+    if (tick % 4 === 1) nextAlert();
+  }, 2200);
+  setTimeout(nextAlert, 900);
+
+  $("pause").addEventListener("click", e => {
+    paused = !paused;
+    e.currentTarget.textContent = paused ? "Reprendre" : "Pause";
+    e.currentTarget.setAttribute("aria-pressed", String(paused));
+  });
+  $("toContact").addEventListener("click", () => $("contact").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }));
+  $("copy").addEventListener("click", e => {
+    const b = e.currentTarget, code = b.parentElement.querySelector("code");
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(code); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Sélectionné"; };
+    try { navigator.clipboard.writeText(code.textContent).then(() => { b.textContent = "Copié"; setTimeout(() => b.textContent = "Copier", 1600); }, fallback); } catch (_) { fallback(); }
+  });
+
+  // ---------- Scène du studio ----------
+  const cv = $("scene"), cx = cv.getContext("2d");
+  let W = 0, H = 0, dpr = 1;
+  function size() {
+    const r = cv.getBoundingClientRect();
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = cv.width = Math.round(r.width * dpr); H = cv.height = Math.round(r.height * dpr);
+  }
+  new ResizeObserver(size).observe(cv);
+  size();
+
+  function rr(x, y, w, h, r) { cx.beginPath(); cx.roundRect ? cx.roundRect(x, y, w, h, r) : cx.rect(x, y, w, h); }
+
+  function cam(x, y, w, h, letter, name, color, t, phase) {
+    // fond de la cam
+    const g = cx.createLinearGradient(x, y, x, y + h);
+    g.addColorStop(0, "#292929"); g.addColorStop(1, "#1f1f1f");
+    cx.fillStyle = g; rr(x, y, w, h, h * .04); cx.fill();
+    // silhouette
+    const bob = reduce ? 0 : Math.sin(t / 700 + phase) * h * .012;
+    cx.fillStyle = color;
+    cx.globalAlpha = .9;
+    cx.beginPath(); cx.arc(x + w / 2, y + h * .42 + bob, h * .16, 0, Math.PI * 2); cx.fill();
+    cx.beginPath(); cx.ellipse(x + w / 2, y + h * .98 + bob, w * .32, h * .36, 0, Math.PI, 0); cx.fill();
+    cx.globalAlpha = 1;
+    cx.fillStyle = "#141414";
+    cx.font = `${h * .17}px "Archivo Black", Impact, sans-serif`;
+    cx.textAlign = "center"; cx.textBaseline = "middle";
+    cx.fillText(letter, x + w / 2, y + h * .43 + bob);
+    // étiquette
+    cx.font = `600 ${Math.max(10 * dpr, h * .065)}px Archivo, Arial, sans-serif`;
+    const tw = cx.measureText(name).width + h * .08;
+    cx.fillStyle = "rgba(0,0,0,.7)"; rr(x + h * .04, y + h * .04, tw, h * .1, h * .02); cx.fill();
+    cx.fillStyle = "#f1efe9"; cx.textAlign = "left";
+    cx.fillText(name, x + h * .08, y + h * .093);
+    cx.strokeStyle = color; cx.lineWidth = Math.max(2, h * .012); rr(x, y, w, h, h * .04); cx.stroke();
+  }
+
+  function draw(t) {
+    // mur du studio
+    const g = cx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#1f1f1f"); g.addColorStop(1, "#141414");
+    cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+    // panneaux acoustiques
+    cx.fillStyle = "rgba(255,255,255,.035)";
+    for (let i = 0; i < 9; i++) for (let j = 0; j < 3; j++) cx.fillRect(W * (.04 + i * .107), H * (.12 + j * .13), W * .09, H * .11);
+    // néon
+    const flick = reduce ? 1 : (Math.sin(t / 90) > .97 ? .55 : 1);
+    cx.save();
+    cx.font = `${H * .2}px "Archivo Black", Impact, sans-serif`;
+    cx.textAlign = "center"; cx.textBaseline = "middle";
+    cx.shadowColor = `rgba(244, 196, 0, ${.9 * flick})`; cx.shadowBlur = H * .06;
+    cx.fillStyle = `rgba(255, 216, 25, ${flick})`;
+    cx.fillText("HXK", W / 2, H * .26);
+    cx.restore();
+    // bureau
+    cx.fillStyle = "#08090c"; cx.fillRect(0, H * .82, W, H * .18);
+    // cams
+    const cw = W * .3, ch = cw * .62;
+    cam(W * .12, H * .42, cw, ch, "H", "Nael · Haskouil", "#ff347c", t, 0);
+    cam(W * .58, H * .42, cw, ch, "K", "Luka · Krousti", "#5ce1e6", t, 2);
+    // vu-mètre
+    const bars = 18, bw = W * .006;
+    for (let i = 0; i < bars; i++) {
+      const v = reduce ? .4 : (.25 + .75 * Math.abs(Math.sin(t / (180 + i * 23) + i)));
+      cx.fillStyle = i % 2 ? "#ffffff" : "#f4c400";
+      cx.fillRect(W * .44 + i * bw * 1.8, H * .8 - v * H * .14, bw, v * H * .14);
+    }
+    if (!reduce) requestAnimationFrame(draw);
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => reduce && draw(0));
+  requestAnimationFrame(draw);
+})();
+</script>
+
+</body>
+</html>

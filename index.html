@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Haskouil × Krousti</title>
+<meta name="description" content="Press kit 2026 de Haskouil × Krousti, duo d'humour.">
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f4c400; color: #141414; font-family: "Helvetica Neue", Arial, sans-serif; }
+  main { text-align: center; padding: 24px; }
+  h1 { font-size: clamp(32px, 8vw, 72px); margin: 0 0 16px; line-height: .95; text-transform: uppercase; }
+  ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  a { color: #141414; font-weight: 700; }
+</style>
+<script>
+  // Tire une des versions du press kit au hasard à chaque visite.
+  // Pour en retirer une, enlève-la de cette liste.
+  var VERSIONS = ["circuit/", "combat/", "live/", "chaine/"];
+  var pick = VERSIONS[Math.floor(Math.random() * VERSIONS.length)];
+  location.replace(pick + location.hash);
+</script>
+</head>
+<body>
+<main>
+  <h1>Haskouil<br>Krousti</h1>
+  <noscript><p>Choisis une version du press kit :</p></noscript>
+  <ul>
+    <li><a href="circuit/">Le circuit</a></li>
+    <li><a href="combat/">Le jeu de combat</a></li>
+    <li><a href="live/">Le live</a></li>
+    <li><a href="chaine/">La chaîne vidéo</a></li>
+  </ul>
+</main>
+</body>
+</html>
