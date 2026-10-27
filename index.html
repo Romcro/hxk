@@ -2,34 +2,474 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Haskouil × Krousti</title>
-<meta name="description" content="Press kit 2026 de Haskouil × Krousti, duo d'humour.">
+<meta name="description" content="Press kit 2026 de Haskouil × Krousti, duo d'humour : chiffres, formats, collabs et contact.">
+<link rel="icon" href="assets/logo/haskouil.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=League+Spartan:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/nav.css">
 <style>
-  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f4c400; color: #141414; font-family: "Helvetica Neue", Arial, sans-serif; }
-  main { text-align: center; padding: 24px; }
-  h1 { font-size: clamp(32px, 8vw, 72px); margin: 0 0 16px; line-height: .95; text-transform: uppercase; }
-  ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-  a { color: #141414; font-weight: 700; }
+/* Layout : page de chaîne vidéo (bannière, en-tête, grille de miniatures). Chaque miniature ouvre une vue « lecture » : lecteur qui fait défiler les chiffres, description, et la suite à droite. Couleurs du kit média HxK. */
+:root {
+  --bg: #141414;
+  --card: #1f1f1f;
+  --card-2: #292929;
+  --line: #3b3b3b;
+  --ink: #ffffff;
+  --ink-dim: #b3b3b3;
+  --yellow: #f4c400;
+  --pink: #ff347c;
+  --tiktok: #5ce1e6;
+  --twitch: #a56bff;
+  --font-display: "Bagel Fat One", "Arial Black", Impact, sans-serif;
+  --font-body: "League Spartan", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.4; }
+img { max-width: 100%; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+.page {
+  max-width: 1280px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18px calc(48px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Bannière et en-tête de chaîne */
+.banner {
+  border-radius: 18px; overflow: hidden; position: relative;
+  aspect-ratio: 5.2 / 1; max-width: 100%; min-height: 110px; display: grid; place-items: center;
+  background: var(--yellow) url(assets/fond/bg-jaune.jpg) center / cover no-repeat;
+}
+.banner .lettrage { width: min(62%, 620px); height: auto; }
+.banner .head { position: absolute; bottom: -6%; width: 15%; max-width: 160px; height: auto; }
+.banner .head.l { left: 4%; transform: rotate(-8deg); }
+.banner .head.r { right: 4%; transform: rotate(8deg); }
+
+.channel { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 22px; align-items: center; margin: 22px 0 6px; }
+.avatar { width: clamp(76px, 12vw, 150px); aspect-ratio: 1; max-width: 100%; border-radius: 50%; object-fit: cover; object-position: center 70%; border: 4px solid var(--yellow); }
+.channel h1 { font-weight: 800; font-size: clamp(26px, 4vw, 40px); margin: 0; line-height: 1; letter-spacing: -.01em; }
+.channel .meta { color: var(--ink-dim); margin: 8px 0 6px; display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.channel .meta b { color: var(--ink); font-weight: 700; }
+.channel .about { margin: 0 0 12px; max-width: 62ch; }
+.channel .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { border: 0; border-radius: 999px; padding: 10px 18px; font-weight: 700; background: var(--ink); color: #141414; text-decoration: none; display: inline-block; }
+.btn.alt { background: var(--card-2); color: var(--ink); }
+.btn:hover { filter: brightness(.92); }
+
+.section-title { font-size: 20px; font-weight: 800; margin: 34px 0 14px; display: flex; align-items: baseline; gap: 10px; }
+.section-title small { font-size: 14px; font-weight: 500; color: var(--ink-dim); }
+.tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--line); margin: 18px 0 20px; }
+.tabs span { padding: 12px 0; font-weight: 700; border-bottom: 3px solid var(--yellow); }
+
+/* Grille de miniatures */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 28px 16px; }
+.card { background: none; border: 0; padding: 0; text-align: left; display: grid; gap: 10px; min-width: 0; text-decoration: none; color: inherit; }
+.card:hover .thumb { transform: scale(1.015); }
+.thumb {
+  position: relative; aspect-ratio: 16 / 9; max-width: 100%; width: 100%; border-radius: 12px; overflow: hidden;
+  background: var(--card); transition: transform .15s; container-type: inline-size;
+}
+.thumb .ph { position: absolute; inset: 0; background-size: cover; background-repeat: no-repeat; }
+.thumb .ph.half { width: 50%; }
+.thumb .ph.half + .ph.half { left: 50%; }
+.thumb .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.6)); }
+.thumb .tx {
+  position: absolute; left: 5cqw; right: 5cqw; bottom: 6cqw;
+  font-family: var(--font-display); font-weight: 400; text-transform: uppercase; line-height: .95;
+  font-size: 9.5cqw; color: var(--ink); text-wrap: balance;
+  -webkit-text-stroke: .5cqw #141414; paint-order: stroke fill; text-shadow: 0 .8cqw 0 #141414;
+}
+.thumb.top .tx { top: 15cqw; bottom: auto; }
+.thumb .tx em { font-style: normal; color: var(--accent, var(--yellow)); }
+.thumb .tag {
+  position: absolute; top: 4cqw; left: 4cqw; background: var(--accent, var(--yellow)); color: #141414;
+  font-weight: 800; font-size: max(11px, 3.6cqw); padding: .8cqw 2.4cqw; border-radius: 999px; letter-spacing: .04em; text-transform: uppercase;
+}
+.thumb .dur {
+  position: absolute; right: 3cqw; bottom: 3cqw; background: rgba(0,0,0,.82); color: #fff;
+  font-weight: 700; font-size: max(11px, 3.4cqw); padding: .4cqw 1.6cqw; border-radius: 4px; font-variant-numeric: tabular-nums;
+}
+.thumb .sticker { position: absolute; right: 4cqw; top: 4cqw; width: 22cqw; height: auto; filter: drop-shadow(0 .8cqw 0 rgba(0,0,0,.35)); }
+.card .row { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 12px; }
+.mini-av { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; object-position: center 70%; }
+.card h3 { margin: 0 0 4px; font-size: 17px; font-weight: 700; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card .sub { color: var(--ink-dim); font-size: 14px; }
+
+/* Vue lecture */
+.watch { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 24px; align-items: start; }
+.back { background: none; border: 0; color: var(--ink-dim); font-weight: 700; padding: 4px 0 14px; }
+.back:hover { color: var(--ink); }
+.player { position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 14px; overflow: hidden; background: #000; container-type: inline-size; }
+.player .thumb { position: absolute; inset: 0; border-radius: 0; aspect-ratio: auto; }
+.player .slide {
+  position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 6cqw;
+  background: var(--slide-bg, var(--yellow)); color: #141414;
+}
+.player .slide b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 17cqw; line-height: .9; }
+.player .slide span { display: block; font-weight: 700; font-size: max(14px, 4.2cqw); margin-top: 2cqw; max-width: 34ch; text-wrap: balance; }
+.player .slide small { position: absolute; top: 4cqw; left: 4cqw; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; font-size: max(11px, 2.4cqw); }
+.player .slide.pop { animation: pop .45s cubic-bezier(.2, 1.4, .4, 1); }
+@keyframes pop { from { transform: scale(.92); opacity: 0; } to { transform: none; opacity: 1; } }
+.play {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 15cqw; min-width: 60px; aspect-ratio: 1.4; border-radius: 22%; border: 0; background: var(--yellow);
+  display: grid; place-items: center;
+}
+.play svg { width: 40%; fill: #141414; }
+.bar { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: rgba(255,255,255,.25); }
+.bar i { display: block; height: 100%; width: 0; background: #141414; }
+.ctrl { position: absolute; left: 3cqw; bottom: 3cqw; display: flex; gap: 8px; }
+.ctrl button { background: rgba(0,0,0,.7); border: 0; border-radius: 999px; padding: 6px 12px; font-weight: 700; color: #fff; font-size: 14px; }
+
+.watch h2 { font-size: clamp(20px, 2.6vw, 26px); font-weight: 800; margin: 14px 0 10px; line-height: 1.2; }
+.owner { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.owner .mini-av { width: 42px; height: 42px; }
+.owner strong { display: block; font-weight: 700; }
+.owner small { color: var(--ink-dim); }
+.owner .btn { margin-left: auto; }
+.desc { background: var(--card); border-radius: 12px; padding: 16px 18px; }
+.desc .chap { font-weight: 700; color: var(--yellow); margin: 0 0 6px; }
+.desc p { margin: 0 0 10px; }
+.desc p.dim { color: var(--ink-dim); font-size: 14px; }
+.desc ul.list { margin: 0 0 12px; padding-left: 20px; }
+.desc ul.list li { margin-bottom: 4px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr)); gap: 8px; margin: 6px 0 12px; }
+.stat { background: var(--card-2); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+.stat b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat span { display: block; margin-top: 6px; font-size: 14px; color: var(--ink-dim); line-height: 1.3; }
+.stat.big { grid-column: span 2; background: var(--yellow); color: #141414; }
+.stat.big span { color: #141414; }
+.duo-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 10px; margin-bottom: 12px; }
+.duo-cols > div { background: var(--card-2); border-radius: 10px; padding: 12px 14px; }
+.duo-cols h3 { margin: 0 0 6px; display: flex; align-items: center; gap: 8px; font-size: 18px; }
+.duo-cols h3 img { width: 34px; height: 34px; }
+.duo-cols ul { margin: 0; padding-left: 18px; color: var(--ink-dim); }
+.formats { display: grid; gap: 8px; margin: 0 0 12px; padding: 0; list-style: none; }
+.formats li { background: var(--card-2); border-radius: 10px; padding: 10px 14px; }
+.formats li b { display: block; }
+.formats li span { color: var(--ink-dim); font-size: 14px; }
+.brands { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0 0 12px; }
+.brands li { background: var(--card-2); border-radius: 999px; padding: 6px 14px; font-weight: 700; }
+.mail { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 4px 0 12px; }
+.mail code { font-family: var(--font-body); font-weight: 700; font-size: 18px; background: var(--card-2); padding: 8px 12px; border-radius: 8px; user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
+.desc a { color: var(--yellow); }
+.src { color: var(--ink-dim); font-size: 13px; margin: 0; }
+
+.next h2 { font-size: 16px; font-weight: 700; margin: 0 0 12px; }
+.next-list { display: grid; gap: 10px; }
+.next-item { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 10px; background: none; border: 0; padding: 0; text-align: left; align-items: start; }
+.next-item .thumb { border-radius: 8px; }
+.next-item h3 { margin: 0 0 4px; font-size: 15px; font-weight: 700; line-height: 1.25; }
+.next-item .sub { color: var(--ink-dim); font-size: 13px; }
+
+.foot { color: var(--ink-dim); font-size: 13px; margin: 40px 0 0; text-align: center; }
+
+@media (max-width: 1020px) { .watch { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) {
+  .channel { grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 14px; }
+  .next-item { grid-template-columns: 140px minmax(0, 1fr); }
+  .banner .head { width: 18%; }
+}
+@media (prefers-reduced-motion: reduce) { .thumb, .player .slide.pop { transition: none; animation: none; } }
 </style>
-<script>
-  // Tire une des versions du press kit au hasard à chaque visite.
-  // Pour en retirer une, enlève-la de cette liste.
-  var VERSIONS = ["circuit/", "combat/", "live/", "chaine/"];
-  var pick = VERSIONS[Math.floor(Math.random() * VERSIONS.length)];
-  location.replace(pick + location.hash);
-</script>
 </head>
 <body>
-<main>
-  <h1>Haskouil<br>Krousti</h1>
-  <noscript><p>Choisis une version du press kit :</p></noscript>
+<nav class="hxk-nav" aria-label="Site">
+  <a class="brand" href="./" aria-label="Accueil"><img src="assets/logo/lettrage-jaune.svg" alt="Haskouil Krousti"></a>
   <ul>
-    <li><a href="circuit/">Le circuit</a></li>
-    <li><a href="combat/">Le jeu de combat</a></li>
-    <li><a href="live/">Le live</a></li>
-    <li><a href="chaine/">La chaîne vidéo</a></li>
+    <li><a class="link" href="./" aria-current="page">Accueil</a></li>
+    <li><a class="link" href="live/">Live</a></li>
+    <li><a class="link" href="repo/">R.E.P.O</a></li>
+    <li><a class="link" href="kart/">Bonus kart</a></li>
   </ul>
-</main>
+</nav>
+
+<div class="page">
+  <div id="home">
+    <div class="banner">
+      <img class="head l" src="assets/logo/haskouil.svg" alt="">
+      <img class="lettrage" src="assets/logo/lettrage-noir.svg" alt="Haskouil Krousti">
+      <img class="head r" src="assets/logo/krousti.svg" alt="">
+    </div>
+
+    <div class="channel">
+      <img class="avatar" src="assets/photos/pp-jaune.jpg" alt="Nael et Luka">
+      <div style="min-width: 0;">
+        <h1>Haskouil × Krousti</h1>
+        <div class="meta"><span><b>447K</b> abonnés cumulés</span><span>·</span><span>TikTok, Instagram, YouTube, Twitch</span></div>
+        <p class="about">Duo de créateurs et amis depuis 15 ans. « On teste les idées les plus stupides, jusqu'à ce que ça dégénère. »</p>
+        <div class="actions">
+          <button class="btn" type="button" data-open="11">Faire une collab</button>
+          <button class="btn alt" type="button" data-open="0">Tout voir depuis le début</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs"><span>Vidéos</span></div>
+    <div class="grid" id="grid"></div>
+
+    <h2 class="section-title">À découvrir aussi <small>Le press kit sous d'autres formes</small></h2>
+    <div class="grid" id="extras"></div>
+  </div>
+
+  <div id="watchView" hidden>
+    <button class="back" type="button" id="back">← Toutes les vidéos</button>
+    <div class="watch">
+      <div style="min-width: 0;">
+        <div class="player" id="player"></div>
+        <h2 id="wTitle"></h2>
+        <div class="owner">
+          <img class="mini-av" src="assets/photos/pp-jaune.jpg" alt="">
+          <div><strong>Haskouil × Krousti</strong><small>447K abonnés cumulés</small></div>
+          <button class="btn" type="button" data-open="11">Faire une collab</button>
+        </div>
+        <div class="desc" id="wDesc"></div>
+      </div>
+      <aside class="next">
+        <h2>À suivre</h2>
+        <div class="next-list" id="nextList"></div>
+      </aside>
+    </div>
+  </div>
+
+  <p class="foot">Page de démonstration aux couleurs du duo, ce n'est pas une vraie chaîne. Chiffres : press kit 2026.</p>
+</div>
+
+<script>
+(() => {
+  const IMG = {
+    allonges: "assets/photos/duo-allonges.jpg", debout: "assets/photos/duo-debout.jpg", pouces: "assets/photos/duo-pouces.jpg",
+    debout2: "assets/photos/duo-debout-2.jpg", ppjaune: "assets/photos/pp-jaune.jpg", pprose: "assets/photos/pp-rose.jpg",
+    saut: "assets/kit/duo.jpg", studio1: "assets/kit/studio1.jpg", diy: "assets/kit/diy.jpg", toque: "assets/kit/toque.jpg",
+    reddit: "assets/kit/reddit.jpg", bk: "assets/kit/bk.jpg", studio2: "assets/kit/studio2.jpg"
+  };
+  const SRC = `<p class="src">Source : press kit 2026</p>`;
+  const st = list => `<div class="stats">${list.map(([b, s, big]) => `<div class="stat${big ? " big" : ""}"><b>${b}</b><span>${s}</span></div>`).join("")}</div>`;
+
+  // Chaque vidéo = une section du press kit, chaque chiffre n'y apparaît qu'une fois.
+  // "slides" = ce que le lecteur fait défiler.
+  const V = [
+    {
+      img: [["allonges", "center 75%"]], tag: "Le duo", tx: "On teste les idées <em>les plus stupides</em>", dur: "447K",
+      title: "Qui sont Haskouil × Krousti ?", chap: "Chapitre 1 · Le duo",
+      slides: [["447K", "abonnés cumulés sur TikTok, Instagram, YouTube et Twitch"], ["15 ans", "d'amitié entre Nael et Luka"], ["25-34 ans", "la majorité de l'audience, devant les 18-24 ans"]],
+      body: `<p>Duo de créateurs et amis depuis 15 ans. « On teste les idées les plus stupides, jusqu'à ce que ça dégénère. »</p>
+        ${st([["447K", "abonnés cumulés sur 4 plateformes", 1], ["15 ans", "d'amitié"]])}
+        <p class="dim">Audience : 25-34 ans en majorité, puis 18-24 ans, puis 13-17 ans.</p>${SRC}`
+    },
+    {
+      img: [["debout", "center 30%"]], tag: "Nael & Luka", tx: "L'un impulse, <em>l'autre construit</em>", dur: "Duo",
+      title: "Deux personnalités, une mécanique de duo", chap: "Chapitre 2 · Nael et Luka",
+      slides: [["Nael", "Impulsion, énergie et présence à l'écran"], ["Luka", "Sens du rythme et de la construction comique"], ["Le duo", "L'un impulse, l'autre construit, l'un rebondit, l'autre relance"]],
+      body: `<div class="duo-cols">
+          <div><h3><img src="assets/logo/haskouil.svg" alt="">Nael · Haskouil</h3><ul>
+            <li>Impulsion, énergie et présence à l'écran</li>
+            <li>Improvisation naturelle : réactions, rebonds et spontanéité</li>
+            <li>Aisance IRL, capable de pousser une situation jusqu'au bout</li></ul></div>
+          <div><h3><img src="assets/logo/krousti.svg" alt="">Luka · Krousti</h3><ul>
+            <li>Sens du rythme et de la construction comique</li>
+            <li>Répartie, timing et précision des punchlines</li>
+            <li>Recul créatif : repère, développe et structure les situations</li></ul></div>
+        </div>
+        <p>Pour une marque : Nael porte l'intégration à l'écran, en live et en IRL ; Luka l'écrit pour qu'elle ne casse pas le contenu.</p>${SRC}`
+    },
+    {
+      img: [["saut", "center 30%"]], tag: "TikTok", accent: "var(--tiktok)", tx: "<em>8,7M</em> de likes", dur: "314K",
+      title: "TikTok : 8,7M de likes et 63,6K nouveaux spectateurs par mois", chap: "Chapitre 3 · TikTok",
+      slides: [["8,7M", "likes cumulés sur TikTok"], ["63,6K", "nouveaux spectateurs sur 28 jours"], ["314K", "abonnés"], ["45 %", "de 18-24 ans"]],
+      body: `${st([["8,7M", "likes cumulés", 1], ["63,6K", "nouveaux spectateurs sur 28 jours"], ["314K", "abonnés"], ["4,5K", "partages sur 28 jours"], ["45 %", "de 18-24 ans"], ["380K", "vues sur 28 jours"]])}${SRC}`
+    },
+    {
+      img: [["studio1", "center"]], tag: "Instagram", accent: "var(--pink)", tx: "<em>78 %</em> de non-abonnés touchés", dur: "71,3K",
+      title: "Instagram : un contenu qui sort de la communauté", chap: "Chapitre 4 · Instagram",
+      slides: [["78 %", "de non-abonnés touchés"], ["152K", "interactions sur 30 jours"], ["71,3K", "abonnés"], ["46 %", "de 25-34 ans"]],
+      body: `${st([["78 %", "de non-abonnés touchés", 1], ["152K", "interactions sur 30 jours"], ["71,3K", "abonnés"], ["46 %", "de 25-34 ans"]])}
+        <p class="dim">Entre 1 et 2 millions de vues par mois.</p>${SRC}`
+    },
+    {
+      img: [["diy", "center"]], tag: "YouTube", accent: "#ff3b3b", tx: "<em>160K</em> spectateurs uniques", dur: "50,1K",
+      title: "YouTube : 160K spectateurs uniques, 38 % de réguliers", chap: "Chapitre 5 · YouTube",
+      slides: [["160K", "spectateurs uniques"], ["38 %", "de spectateurs réguliers"], ["20,2K h", "de visionnage en septembre 2026"], ["50,1K", "abonnés"]],
+      body: `${st([["160K", "spectateurs uniques", 1], ["38 %", "de spectateurs réguliers"], ["20,2K h", "de visionnage (septembre 2026)"], ["50,1K", "abonnés"]])}${SRC}`
+    },
+    {
+      img: [["toque", "center"]], tag: "Twitch", accent: "var(--twitch)", tx: "Près de <em>17K€</em> au ZEvent", dur: "20h30",
+      title: "Twitch : 3 lives par semaine, et près de 17K€ récoltés au ZEvent", chap: "Chapitre 6 · Twitch et ZEvent",
+      slides: [["17K€", "récoltés, ou presque, au ZEvent 2026"], ["+48 000", "spectateurs uniques pendant le ZEvent"], ["80-100", "viewers en moyenne"], ["20h30", "lundi, mercredi et jeudi"]],
+      body: `<p>En live <strong>lundi, mercredi et jeudi à 20h30</strong>, dont le format cuisine « Toque &amp; Tablier ».</p>
+        ${st([["11,7K", "abonnés"], ["80 à 100", "viewers moyens"], ["5K à 8K", "spectateurs uniques par mois"], ["200 à 400", "chatteurs"], ["~155K", "minutes regardées par mois"]])}
+        <p><strong>ZEvent, du 4 au 6 septembre 2026</strong></p>
+        ${st([["~17K€", "récoltés", 1], ["+48 000", "spectateurs uniques"], ["298", "viewers au pic, 170 en moyenne"]])}${SRC}`
+    },
+    {
+      img: [["reddit", "center"]], cls: "top", tag: "Podcast", tx: "<em>40 min</em> de visionnage moyen", dur: "2h+",
+      title: "Podcast Histoires Reddit : +2M de vues et 40 minutes de rétention", chap: "Chapitre 7 · Podcast Histoires Reddit",
+      slides: [["+2M", "vues verticales"], ["40 min", "de visionnage moyen sur des épisodes de 2h+"], ["44 %", "de femmes dans l'audience"]],
+      body: `<p>Le format long sur YouTube, découpé en vertical.</p>
+        ${st([["+2M", "vues verticales", 1], ["40 min", "de visionnage moyen sur 2h+"]])}
+        <p class="dim">Audience : 56 % d'hommes, 44 % de femmes ; ~53 % de 25-34 ans, ~34 % de 18-24 ans. 2 épisodes, +30K vues sur YouTube.</p>${SRC}`
+    },
+    {
+      img: [["pouces", "center 30%"]], tag: "Gaming", tx: "<em>446K</em> vues sur un épisode", dur: "446K",
+      title: "Gaming éditorialisé : un épisode à 446K vues", chap: "Chapitre 8 · Gaming éditorialisé",
+      slides: [["446K", "vues sur un seul épisode"], ["75 %", "d'hommes dans l'audience"]],
+      body: `<p>Des jeux racontés comme des épisodes, en long sur YouTube.</p>
+        ${st([["446K", "vues sur un épisode", 1], ["75 %", "d'hommes"]])}
+        <p class="dim">~38 % de 25-34 ans, ~36 % de 18-24 ans. +530K vues sur les 3 vidéos du format.</p>${SRC}`
+    },
+    {
+      img: [["ppjaune", "center 70%"]], tag: "Vertical", accent: "var(--tiktok)", tx: "<em>3,1M</em> de vues", dur: "Shorts",
+      title: "Le sketch « jetlag » à 3,1M de vues", chap: "Chapitre 9 · Vertical",
+      slides: [["3,1M", "vues, sketch « jetlag »"], ["2M", "vues, clip « permis »"], ["403K", "vues, extrait Reddit"]],
+      body: `<p>TikTok, Reels et Shorts. Le live sert de test, YouTube raconte, le vertical décline : une collab peut vivre sur trois plateformes.</p>
+        ${st([["3,1M", "vues, sketch « jetlag »", 1], ["2M", "vues, clip « permis »"], ["403K", "vues, extrait Reddit"]])}${SRC}`
+    },
+    {
+      img: [["debout2", "center 30%"]], tag: "Formats", tx: "Ce qu'on <em>propose</em>", dur: "5 formats",
+      title: "Ce qu'on propose aux marques", chap: "Chapitre 10 · Nos formats",
+      slides: [["Long", "intégration dans une vidéo, ou vidéo dédiée"], ["Live", "un live Twitch sponsorisé"], ["360°", "une collab déclinée en long, en live et en vertical"]],
+      body: `<ul class="formats">
+          <li><b>Intégration dans une vidéo longue</b><span>La marque entre dans un épisode YouTube, écrite pour ne pas casser le contenu.</span></li>
+          <li><b>Vidéo dédiée</b><span>Un épisode construit autour de la marque.</span></li>
+          <li><b>Live sponsorisé</b><span>Sur Twitch, lundi, mercredi ou jeudi à 20h30.</span></li>
+          <li><b>Déclinaison verticale</b><span>TikTok, Reels et Shorts.</span></li>
+          <li><b>Pack 360° multiplateforme</b><span>Le live teste, YouTube raconte, le vertical décline.</span></li>
+        </ul>
+        <p class="dim">Tarifs sur demande.</p>`
+    },
+    {
+      img: [["bk", "center"]], tag: "Collabs", tx: "<em>Vainqueurs</em> chez Battle Kart", dur: "6 marques",
+      title: "Nos collabs, et la victoire chez Battle Kart", chap: "Chapitre 11 · Collabs",
+      slides: [["6", "marques partenaires : HelloFresh, Kqueo, Battle Kart, Xsolla, Holy, Razer"], ["12/10", "victoire à la course des régions Battle Kart, 2026"]],
+      body: `<p>Ils ont déjà fait équipe avec le duo :</p>
+        <ul class="brands"><li>HelloFresh</li><li>Kqueo</li><li>Battle Kart</li><li>Xsolla</li><li>Holy</li><li>Razer</li></ul>
+        <p>Le <strong>12 octobre 2026</strong>, le duo remporte la course des régions organisée par Battle Kart, déjà partenaire : une deuxième activation avec la marque. <a href="https://www.instagram.com/p/DePopqyAWar/" target="_blank" rel="noopener">Voir le post Instagram</a></p>
+        <p><a href="kart/">Faire un tour en kart avec eux (bonus) →</a></p>${SRC}`
+    },
+    {
+      img: [["studio2", "center"]], tag: "Contact", tx: "Viens tourner <em>au studio</em>", dur: "Collab",
+      title: "Le studio, et comment monter une collab", chap: "Chapitre 12 · Studio et contact",
+      slides: [["Studio", "dans les locaux du Phoenix depuis 2026 : créer, tourner, streamer"], ["Contact", "haskouilpro@outlook.fr"]],
+      body: `<p>Le duo crée, tourne et streame dans son studio, installé depuis 2026 dans les locaux du Phoenix.</p>
+        <p>Pour une collab, écris-leur :</p>
+        <div class="mail"><code>haskouilpro@outlook.fr</code><button class="btn" type="button" data-copy>Copier</button></div>${SRC}`
+    }
+  ];
+
+  const EXTRAS = [
+    { href: "live/", img: [["pprose", "center 70%"]], tag: "Live", accent: "var(--pink)", tx: "Le press kit <em>en live</em>", dur: "Live", title: "Le press kit en faux live Twitch", sub: "Chat, alertes et chiffres en overlay" },
+    { href: "repo/", img: [["pouces", "center 30%"]], tag: "R.E.P.O", accent: "#7bdc4b", tx: "Atteins <em>le quota</em>", dur: "Jeu", title: "Mission R.E.P.O : récupère les chiffres", sub: "Un mini-jeu avec les semibots", sticker: "assets/repo/vert-xl.webp" },
+    { href: "kart/", img: [["bk", "center"]], tag: "Bonus", tx: "Fais <em>un tour</em> de kart", dur: "Jeu", title: "Bonus : un tour de kart avec Haskouil ou Krousti", sub: "En hommage à la victoire chez Battle Kart" }
+  ];
+
+  const $ = id => document.getElementById(id);
+  const thumbHTML = (v, big) => `
+    <div class="thumb${v.cls ? " " + v.cls : ""}" style="${v.accent ? `--accent:${v.accent}` : ""}">
+      ${v.img.map(([k, pos]) => `<div class="ph${v.img.length > 1 ? " half" : ""}" style="background-image:url(${IMG[k]});background-position:${pos}"></div>`).join("")}
+      <div class="shade"></div>
+      ${v.sticker ? `<img class="sticker" src="${v.sticker}" alt="">` : ""}
+      <span class="tag">${v.tag}</span>
+      <span class="tx">${v.tx}</span>
+      ${big ? "" : `<span class="dur">${v.dur}</span>`}
+    </div>`;
+
+  $("grid").innerHTML = V.map((v, i) => `
+    <button class="card" type="button" data-open="${i}">
+      ${thumbHTML(v)}
+      <div class="row"><img class="mini-av" src="${IMG.ppjaune}" alt="">
+        <div><h3>${v.title}</h3><div class="sub">Haskouil × Krousti · ${v.chap}</div></div></div>
+    </button>`).join("");
+  $("extras").innerHTML = EXTRAS.map(v => `
+    <a class="card" href="${v.href}">
+      ${thumbHTML(v)}
+      <div class="row"><img class="mini-av" src="${IMG.ppjaune}" alt="">
+        <div><h3>${v.title}</h3><div class="sub">${v.sub}</div></div></div>
+    </a>`).join("");
+
+  // Lecteur : fait défiler les chiffres de la section comme une vidéo
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let cur = 0, timer = 0, step = -1, playing = false;
+  const SLIDE_MS = 2600;
+
+  function renderPoster() {
+    $("player").innerHTML = thumbHTML(V[cur], true) +
+      `<button class="play" type="button" id="playBtn" aria-label="Lire"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg></button>`;
+    $("playBtn").addEventListener("click", play);
+  }
+  function play() {
+    playing = true; step = -1;
+    $("player").innerHTML = `<div class="slide" id="slide"></div>
+      <div class="ctrl"><button type="button" id="pauseBtn">Pause</button><button type="button" id="replayBtn">Revoir</button></div>
+      <div class="bar"><i id="barFill"></i></div>`;
+    $("pauseBtn").addEventListener("click", togglePause);
+    $("replayBtn").addEventListener("click", play);
+    nextSlide();
+  }
+  function nextSlide() {
+    clearTimeout(timer);
+    const v = V[cur];
+    step++;
+    if (step >= v.slides.length) { playing = false; renderEnd(); return; }
+    const [b, s] = v.slides[step];
+    const el = $("slide");
+    el.style.setProperty("--slide-bg", v.accent || "var(--yellow)");
+    el.innerHTML = `<small>${v.tag} · ${step + 1}/${v.slides.length}</small><div><b>${b}</b><span>${s}</span></div>`;
+    if (!reduce) { el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
+    $("barFill").style.width = `${((step + 1) / v.slides.length) * 100}%`;
+    timer = setTimeout(nextSlide, SLIDE_MS);
+  }
+  function togglePause(e) {
+    playing = !playing;
+    e.currentTarget.textContent = playing ? "Pause" : "Lecture";
+    if (playing) timer = setTimeout(nextSlide, SLIDE_MS); else clearTimeout(timer);
+  }
+  function renderEnd() {
+    const n = (cur + 1) % V.length;
+    $("player").innerHTML = thumbHTML(V[n], true) +
+      `<button class="play" type="button" id="playNext" aria-label="Vidéo suivante"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg></button>
+       <div class="ctrl"><button type="button" id="replayEnd">Revoir</button></div>`;
+    $("playNext").addEventListener("click", () => { open(n); play(); });
+    $("replayEnd").addEventListener("click", play);
+  }
+
+  function open(i) {
+    clearTimeout(timer);
+    cur = i;
+    const v = V[i];
+    $("home").hidden = true; $("watchView").hidden = false;
+    $("wTitle").textContent = v.title;
+    $("wDesc").innerHTML = `<p class="chap">${v.chap}</p>${v.body}`;
+    renderPoster();
+    $("nextList").innerHTML = V.map((w, k) => k === i ? "" : `
+      <button class="next-item" type="button" data-open="${k}">${thumbHTML(w)}
+        <div><h3>${w.title}</h3><div class="sub">${w.chap}</div></div></button>`).join("");
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
+  function home() {
+    clearTimeout(timer);
+    $("watchView").hidden = true; $("home").hidden = false;
+  }
+
+  document.addEventListener("click", e => {
+    const o = e.target.closest("[data-open]");
+    if (o) { open(+o.dataset.open); return; }
+    const c = e.target.closest("[data-copy]");
+    if (c) {
+      const code = c.parentElement.querySelector("code");
+      const fallback = () => { const r = document.createRange(); r.selectNodeContents(code); const s = getSelection(); s.removeAllRanges(); s.addRange(r); c.textContent = "Sélectionné"; };
+      try { navigator.clipboard.writeText(code.textContent).then(() => { c.textContent = "Copié"; setTimeout(() => c.textContent = "Copier", 1600); }, fallback); } catch (_) { fallback(); }
+    }
+  });
+  $("back").addEventListener("click", home);
+  window.addEventListener("keydown", e => { if (e.key === "Escape" && !$("watchView").hidden) home(); });
+})();
+</script>
 </body>
 </html>

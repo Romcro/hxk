@@ -1,22 +1,20 @@
-# Site Haskouil × Krousti : version aléatoire
+# Site Haskouil × Krousti
 
-À chaque visite, `index.html` envoie le visiteur sur une des 4 versions du press kit, tirée au hasard :
+Press kit 2026 du duo, en site statique (HTML, CSS et JS, sans build ni serveur).
 
-- `circuit/` : le circuit automobile
-- `combat/` : le jeu de combat
-- `live/` : le faux live
-- `chaine/` : la chaîne vidéo
-
-Chaque version marche aussi seule avec son adresse directe (ex. `tonsite.fr/live/`).
+- `index.html` : l'accueil, une page de chaîne vidéo. Chaque miniature ouvre une section du press kit.
+- `live/` : un faux live, avec chat, alertes et overlays qui déroulent les chiffres.
+- `repo/` : le mini-jeu « Mission R.E.P.O », on attrape les semibots pour récupérer les chiffres.
+- `kart/` : le bonus kart, un contre-la-montre de 3 tours en clin d'œil à la victoire chez Battle Kart.
+- `assets/` : logos, photos, fonds, semibots et la barre de navigation commune (`nav.css`).
 
 ## Mettre en ligne
 
-Le site est fait de fichiers statiques : aucun serveur particulier, aucune base de données.
+Le site est publié avec **GitHub Pages** depuis la branche `main`, dossier racine (Settings → Pages).
+Chaque push sur `main` met le site à jour au bout d'une minute environ.
 
-- **Netlify (le plus simple, gratuit)** : sur app.netlify.com/drop, glisse le dossier entier. Tu obtiens une adresse en quelques secondes, puis tu peux y brancher ton nom de domaine.
-- **Hébergement classique (OVH, o2switch…)** : envoie le contenu du dossier dans `www/` ou `public_html/` par FTP.
-- **GitHub Pages** : pousse le dossier dans un dépôt, puis active Pages dans les réglages.
+Autres options : glisser le dossier sur app.netlify.com/drop, ou l'envoyer par FTP dans `www/` chez un hébergeur classique.
 
-## Retirer ou ajouter une version
+## Modifier les chiffres
 
-Dans `index.html`, modifie la liste `VERSIONS`.
+Les chiffres sont écrits directement dans chaque page (tableau `V` dans `index.html`, `CHAT`, `LOWER` et `ALERTS` dans `live/index.html`, `LOOT` dans `repo/index.html`, `FACTS` dans `kart/index.html`). Garde les mêmes valeurs partout.

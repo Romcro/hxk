@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Press kit 2026 de Haskouil × Krousti, duo d'humour : chiffres, formats, collabs et contact.">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>HXK en direct</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<title>Live · Haskouil × Krousti</title>
+<meta name="description" content="Un live simulé de Haskouil × Krousti : le chat, les alertes et les overlays déroulent le press kit 2026.">
+<link rel="icon" href="../assets/logo/haskouil.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=League+Spartan:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="../assets/nav.css">
 <style>
 /* Layout : une page de live (lecteur + chat à droite, panneaux d'info dessous). Le lecteur porte les overlays, le chat déroule le press kit message par message. */
 :root {
@@ -22,26 +22,28 @@
   --hot: #f4c400;
   --gold: #f4c400;
   --mint: #5ce1e6;
-  --font-display: "Archivo Black", "Arial Black", Impact, sans-serif;
-  --font-body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Bagel Fat One", "Arial Black", Impact, sans-serif;
+  --font-body: "League Spartan", "Helvetica Neue", Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   color-scheme: dark;
 }
 [hidden] { display: none !important; }
 * { box-sizing: border-box; }
-body {
-  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 16px 40px;
-}
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.45; }
+img { max-width: 100%; }
 button { font: inherit; color: inherit; cursor: pointer; }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-.page { max-width: 1280px; margin: 0 auto; display: grid; gap: 16px; }
+.page {
+  max-width: 1280px; margin: 0 auto; display: grid; gap: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px calc(40px + env(safe-area-inset-bottom, 0px));
+}
 
 .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-.logo { font-family: var(--font-display); font-size: 20px; letter-spacing: .01em; }
-.logo em { font-style: normal; color: var(--hot); }
+.logo { font-family: var(--font-display); font-size: 22px; letter-spacing: .01em; }
+.logo em { font-style: normal; color: #ff3b3b; }
 .demo-note { font-size: 13px; color: var(--ink-dim); }
 
 .main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
@@ -49,9 +51,11 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
 /* Lecteur */
 .player {
   position: relative; aspect-ratio: 16 / 9; max-width: 100%; overflow: hidden; border-radius: 6px;
-  background: #0a0b0e; container-type: inline-size;
+  background: #ff347c url(../assets/fond/bg-rose.jpg) center / cover no-repeat; container-type: inline-size;
 }
-.scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 62%; animation: zoom 24s ease-in-out infinite alternate; }
+@keyframes zoom { from { transform: scale(1); } to { transform: scale(1.08) translateY(-1.5%); } }
+.watermark { right: 3cqw; bottom: 8.5cqw; width: 17cqw; height: auto; opacity: .9; filter: drop-shadow(0 .3cqw .6cqw rgba(0,0,0,.4)); }
 .ov { position: absolute; z-index: 2; }
 .live-badge {
   top: 3cqw; left: 3cqw; display: flex; gap: 1.2cqw; align-items: center;
@@ -110,12 +114,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
 
 /* Infos sous le lecteur */
 .stream-info { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; }
-.avatar {
-  width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
-  background: linear-gradient(135deg, var(--hot) 0 50%, var(--ink) 50%); color: #141414;
-  font-family: var(--font-display); font-size: 18px; border: 3px solid var(--hot);
-}
-.stream-info h1 { font-family: var(--font-display); font-weight: 400; font-size: 20px; margin: 0; line-height: 1.15; }
+.avatar { width: 62px; height: 62px; border-radius: 50%; object-fit: cover; object-position: center 70%; border: 3px solid var(--hot); display: block; }
+.stream-info h1 { font-weight: 800; font-size: 22px; margin: 0; line-height: 1.15; }
 .stream-info .t { margin: 2px 0 6px; font-weight: 500; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .tags span { background: var(--surface-2); border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; color: var(--ink-dim); }
@@ -145,10 +145,10 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
 .chat-foot { padding: 10px 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-dim); }
 
 /* Panneaux */
-.panels-title { font-family: var(--font-display); font-weight: 400; font-size: 18px; margin: 8px 0 0; }
+.panels-title { font-weight: 800; font-size: 20px; margin: 8px 0 0; }
 .panels { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 12px; align-items: start; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; min-width: 0; }
-.panel h2 { margin: 0; padding: 10px 14px; font-family: var(--font-display); font-weight: 400; font-size: 15px; letter-spacing: .02em; background: var(--surface-2); border-bottom: 2px solid var(--hot); }
+.panel h2 { margin: 0; padding: 10px 14px; font-weight: 800; font-size: 16px; letter-spacing: .02em; background: var(--surface-2); border-bottom: 2px solid var(--hot); }
 .panel .body { padding: 12px 14px 14px; }
 .panel p { margin: 0 0 8px; color: var(--ink-dim); }
 .panel p strong { color: var(--ink); font-weight: 600; }
@@ -179,19 +179,28 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
   .follow { grid-column: 1 / -1; justify-content: center; }
   .sponsor-slot, .live-badge .sched { display: none; }
   .lower { bottom: 10cqw; max-width: 86cqw; }
+  .watermark { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ticker .track { animation: none; }
   .alert.show { animation: none; }
-  .msg, .lower.swap { animation: none; }
+  .msg, .lower.swap, .scene { animation: none; }
   .live-badge .dot::before { animation: none; }
 }
 </style>
 </head>
 <body>
+<nav class="hxk-nav" aria-label="Site">
+  <a class="brand" href="../" aria-label="Accueil"><img src="../assets/logo/lettrage-jaune.svg" alt="Haskouil Krousti"></a>
+  <ul>
+    <li><a class="link" href="../">Accueil</a></li>
+    <li><a class="link" href="./" aria-current="page">Live</a></li>
+    <li><a class="link" href="../repo/">R.E.P.O</a></li>
+    <li><a class="link" href="../kart/">Bonus kart</a></li>
+  </ul>
+</nav>
 
-
-<div class="page">
+<main class="page">
   <div class="top">
     <div class="logo">HXK <em>●</em> en direct</div>
     <div class="demo-note">Live simulé : chaque message et chaque overlay est une donnée du press kit 2026.</div>
@@ -200,7 +209,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
   <div class="main">
     <div style="display: grid; gap: 14px; min-width: 0;">
       <div class="player" id="player">
-        <canvas class="scene" id="scene" aria-hidden="true"></canvas>
+        <img class="scene" src="../assets/photos/pp-rose.jpg" alt="Nael et Luka allongés sur fond rose">
+        <img class="ov watermark" src="../assets/logo/lettrage-blanc.svg" alt="">
 
         <div class="ov live-badge"><span class="dot">EN DIRECT</span><span class="sched">Lun · Mer · Jeu · 20h30</span></div>
 
@@ -221,7 +231,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
       </div>
 
       <div class="stream-info">
-        <div class="avatar" aria-hidden="true">HK</div>
+        <img class="avatar" src="../assets/photos/pp-jaune.jpg" alt="">
         <div style="min-width: 0;">
           <h1>Haskouil × Krousti</h1>
           <p class="t">« On teste les idées les plus stupides, jusqu'à ce que ça dégénère »</p>
@@ -254,7 +264,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
         <div><dt>Abonnés Twitch</dt><dd>11,7K</dd></div>
         <div><dt>Viewers moyens</dt><dd>80 à 100</dd></div>
         <div><dt>Vues live / mois</dt><dd>~13K</dd></div>
-        <div><dt>Spectateurs uniques / mois</dt><dd>5 à 8K</dd></div>
+        <div><dt>Spectateurs uniques / mois</dt><dd>5K à 8K</dd></div>
         <div><dt>Chatteurs</dt><dd>200 à 400</dd></div>
         <div><dt>Minutes regardées / mois</dt><dd>~155K</dd></div>
       </dl>
@@ -271,14 +281,13 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
       </dl>
       <h3>Instagram · 71,3K abonnés</h3>
       <dl>
-        <div><dt>Vues / mois</dt><dd>1 à 2M</dd></div>
+        <div><dt>Vues / mois</dt><dd>entre 1 et 2 millions</dd></div>
         <div><dt>Non-abonnés touchés</dt><dd>78 %</dd></div>
         <div><dt>Interactions / 30 jours</dt><dd>152K</dd></div>
         <div><dt>25-34 ans</dt><dd>46 %</dd></div>
       </dl>
       <h3>YouTube · 50,1K abonnés</h3>
       <dl>
-        <div><dt>Vues / 28 jours</dt><dd>550K</dd></div>
         <div><dt>Spectateurs uniques</dt><dd>160K</dd></div>
         <div><dt>Spectateurs réguliers</dt><dd>38 %</dd></div>
         <div><dt>Heures de visionnage (sept. 2026)</dt><dd>20,2K</dd></div>
@@ -287,9 +296,9 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
 
     <section class="panel"><h2>Formats</h2><div class="body">
       <h3>Podcast Histoires Reddit</h3>
-      <p>YouTube long + vertical. 2 épisodes : <strong>+30K vues YouTube</strong>, <strong>+2M vues verticales</strong>, <strong>40 min</strong> de visionnage moyen sur 2h+. 56 % d'hommes, 44 % de femmes.</p>
+      <p><strong>+2M vues verticales</strong> et <strong>40 min</strong> de visionnage moyen sur des épisodes de 2h+. 56 % d'hommes, 44 % de femmes. 2 épisodes, +30K vues sur YouTube.</p>
       <h3>Gaming éditorialisé</h3>
-      <p>YouTube long + vertical. <strong>+530K vues</strong> sur 3 vidéos, dont 446K sur un épisode. 75 % d'hommes.</p>
+      <p><strong>446K vues</strong> sur un seul épisode. 75 % d'hommes. +530K vues sur les 3 vidéos du format.</p>
       <h3>Vertical</h3>
       <p>TikTok, Reels, Shorts. Sketch « jetlag » <strong>3,1M</strong> de vues, clip « permis » <strong>2M</strong>, extrait Reddit <strong>403K</strong>.</p>
       <h3>IRL</h3>
@@ -317,8 +326,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
       <div class="mail"><code>haskouilpro@outlook.fr</code><button type="button" id="copy">Copier</button></div>
     </div></section>
   </div>
-  <p class="src">Chiffres : press kit 2026 du duo.</p>
-</div>
+  <p class="src">Chiffres : press kit 2026 du duo. Page de démonstration, ce n'est pas un vrai live.</p>
+</main>
 
 <script>
 (() => {
@@ -327,9 +336,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
 
   // ---------- Bandeau défilant ----------
   const TICK = [
-    ["TikTok", "314K abonnés"], ["Instagram", "71,3K abonnés"], ["YouTube", "50,1K abonnés"], ["Twitch", "11,7K abonnés"],
-    ["Sketch « jetlag »", "3,1M vues"], ["Clip « permis »", "2M vues"], ["Podcast Reddit", "40 min de visionnage moyen"],
-    ["Instagram", "78 % de non-abonnés touchés"], ["ZEvent", "près de 17K€ récoltés"], ["Battle Kart", "victoire le 12 oct. 2026"]
+    ["Le duo", "447K abonnés cumulés"], ["Sketch « jetlag »", "3,1M vues"], ["Clip « permis »", "2M vues"],
+    ["Podcast Reddit", "40 min de visionnage moyen"], ["ZEvent", "près de 17K€ récoltés"], ["Battle Kart", "victoire le 12 oct. 2026"]
   ];
   const once = TICK.map(([a, b]) => `<span>${a} <b>${b}</b></span>`).join("");
   $("track").innerHTML = once + once;
@@ -342,8 +350,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
     ["160K", "YouTube", "spectateurs uniques"],
     ["40 min", "Podcast Histoires Reddit", "de visionnage moyen sur 2h+"],
     ["446K", "Gaming éditorialisé", "vues sur un seul épisode"],
-    ["~155K", "Twitch", "minutes regardées par mois"],
-    ["+48 000", "ZEvent 2026", "spectateurs uniques"]
+    ["~155K", "Twitch", "minutes regardées par mois"]
   ];
   let li = 0;
   function nextLower() {
@@ -359,7 +366,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
     ["Partenaire passé", "Razer", "Ils ont déjà fait équipe avec le duo"],
     ["Record", "Sketch « jetlag »", "3,1M de vues en vertical"],
     ["Partenaire passé", "HelloFresh", "Ils ont déjà fait équipe avec le duo"],
-    ["ZEvent 2026", "Près de 17K€ récoltés", "Pic à 298 viewers, +48 000 spectateurs uniques"],
+    ["ZEvent 2026", "+48 000 spectateurs uniques", "Pic à 298 viewers"],
     ["Partenaire passé", "Holy", "Ils ont déjà fait équipe avec le duo"],
     ["Victoire", "Battle Kart", "Course des régions, 12 octobre 2026"],
     ["Partenaire passé", "Xsolla", "Ils ont déjà fait équipe avec le duo"],
@@ -395,27 +402,19 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
     ["nael", "« On teste les idées les plus stupides, jusqu'à ce que ça dégénère »"],
     ["luka", "L'un impulse, l'autre construit."],
     ["mod", "Nael porte l'intégration à l'écran, en live et en IRL. Luka l'écrit et la scénarise pour qu'elle ne casse pas le contenu."],
-    ["tiktok", "<b>314K</b> abonnés et <b>8,7M</b> de likes cumulés"],
-    ["tiktok", "<b>380K</b> vues, <b>63,6K</b> nouveaux spectateurs et <b>4,5K</b> partages sur 28 jours"],
-    ["tiktok", "<b>45 %</b> de l'audience a 18-24 ans"],
+    ["tiktok", "<b>8,7M</b> de likes cumulés sur TikTok"],
+    ["tiktok", "<b>63,6K</b> nouveaux spectateurs sur 28 jours"],
     ["event", "Alerte : le sketch « jetlag » passe les <b>3,1M</b> de vues en vertical"],
-    ["insta", "<b>71,3K</b> abonnés, <b>1 à 2M</b> de vues par mois"],
     ["insta", "<b>78 %</b> de non-abonnés touchés : le contenu sort de la communauté"],
-    ["insta", "<b>152K</b> interactions sur 30 jours, <b>46 %</b> de 25-34 ans"],
-    ["yt", "<b>50,1K</b> abonnés, <b>550K</b> vues sur 28 jours"],
     ["yt", "<b>160K</b> spectateurs uniques, dont <b>38 %</b> de réguliers"],
-    ["yt", "<b>20,2K</b> heures de visionnage en septembre 2026"],
     ["formats", "Podcast Histoires Reddit : <b>40 min</b> de visionnage moyen sur des épisodes de 2h+"],
-    ["formats", "Podcast Reddit : <b>+2M</b> vues verticales, <b>+30K</b> vues YouTube sur 2 épisodes. 44 % de femmes"],
-    ["formats", "Gaming éditorialisé : <b>+530K</b> vues sur 3 vidéos, dont <b>446K</b> sur un épisode"],
+    ["formats", "Podcast Reddit : <b>+2M</b> vues verticales"],
+    ["formats", "Gaming éditorialisé : <b>446K</b> vues sur un seul épisode"],
     ["formats", "Vertical : clip « permis » <b>2M</b>, extrait Reddit <b>403K</b>"],
     ["mod", "Le live sert de test, YouTube raconte, le vertical décline : une collab peut vivre sur trois plateformes."],
-    ["twitch", "<b>11,7K</b> abonnés, <b>80 à 100</b> viewers en moyenne"],
-    ["twitch", "<b>5 à 8K</b> spectateurs uniques et <b>~155K</b> minutes regardées par mois"],
-    ["twitch", "<b>200 à 400</b> chatteurs. Lives lundi, mercredi et jeudi à 20h30"],
+    ["twitch", "Lives lundi, mercredi et jeudi à 20h30, dont le format cuisine « Toque &amp; Tablier »"],
     ["event", "Emplacement sponsor : <b>ta marque ici</b> (exemple)"],
-    ["palmares", "ZEvent du 4 au 6 sept. 2026 : <b>170</b> viewers moyens, pic à <b>298</b>"],
-    ["palmares", "ZEvent : <b>+48 000</b> spectateurs uniques, près de <b>17K€</b> récoltés"],
+    ["palmares", "ZEvent 2026 : près de <b>17K€</b> récoltés"],
     ["palmares", "12 oct. 2026 : victoire à la course des régions organisée par <b>Battle Kart</b>"],
     ["mod", "Ils ont déjà fait équipe avec le duo : HelloFresh, Kqueo, Battle Kart, Xsolla, Holy, Razer"],
     ["mod", "Studio installé au Phoenix depuis 2026, pour créer, tourner et streamer"],
@@ -463,79 +462,6 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-
     const fallback = () => { const r = document.createRange(); r.selectNodeContents(code); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Sélectionné"; };
     try { navigator.clipboard.writeText(code.textContent).then(() => { b.textContent = "Copié"; setTimeout(() => b.textContent = "Copier", 1600); }, fallback); } catch (_) { fallback(); }
   });
-
-  // ---------- Scène du studio ----------
-  const cv = $("scene"), cx = cv.getContext("2d");
-  let W = 0, H = 0, dpr = 1;
-  function size() {
-    const r = cv.getBoundingClientRect();
-    dpr = Math.min(devicePixelRatio || 1, 2);
-    W = cv.width = Math.round(r.width * dpr); H = cv.height = Math.round(r.height * dpr);
-  }
-  new ResizeObserver(size).observe(cv);
-  size();
-
-  function rr(x, y, w, h, r) { cx.beginPath(); cx.roundRect ? cx.roundRect(x, y, w, h, r) : cx.rect(x, y, w, h); }
-
-  function cam(x, y, w, h, letter, name, color, t, phase) {
-    // fond de la cam
-    const g = cx.createLinearGradient(x, y, x, y + h);
-    g.addColorStop(0, "#292929"); g.addColorStop(1, "#1f1f1f");
-    cx.fillStyle = g; rr(x, y, w, h, h * .04); cx.fill();
-    // silhouette
-    const bob = reduce ? 0 : Math.sin(t / 700 + phase) * h * .012;
-    cx.fillStyle = color;
-    cx.globalAlpha = .9;
-    cx.beginPath(); cx.arc(x + w / 2, y + h * .42 + bob, h * .16, 0, Math.PI * 2); cx.fill();
-    cx.beginPath(); cx.ellipse(x + w / 2, y + h * .98 + bob, w * .32, h * .36, 0, Math.PI, 0); cx.fill();
-    cx.globalAlpha = 1;
-    cx.fillStyle = "#141414";
-    cx.font = `${h * .17}px "Archivo Black", Impact, sans-serif`;
-    cx.textAlign = "center"; cx.textBaseline = "middle";
-    cx.fillText(letter, x + w / 2, y + h * .43 + bob);
-    // étiquette
-    cx.font = `600 ${Math.max(10 * dpr, h * .065)}px Archivo, Arial, sans-serif`;
-    const tw = cx.measureText(name).width + h * .08;
-    cx.fillStyle = "rgba(0,0,0,.7)"; rr(x + h * .04, y + h * .04, tw, h * .1, h * .02); cx.fill();
-    cx.fillStyle = "#f1efe9"; cx.textAlign = "left";
-    cx.fillText(name, x + h * .08, y + h * .093);
-    cx.strokeStyle = color; cx.lineWidth = Math.max(2, h * .012); rr(x, y, w, h, h * .04); cx.stroke();
-  }
-
-  function draw(t) {
-    // mur du studio
-    const g = cx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, "#1f1f1f"); g.addColorStop(1, "#141414");
-    cx.fillStyle = g; cx.fillRect(0, 0, W, H);
-    // panneaux acoustiques
-    cx.fillStyle = "rgba(255,255,255,.035)";
-    for (let i = 0; i < 9; i++) for (let j = 0; j < 3; j++) cx.fillRect(W * (.04 + i * .107), H * (.12 + j * .13), W * .09, H * .11);
-    // néon
-    const flick = reduce ? 1 : (Math.sin(t / 90) > .97 ? .55 : 1);
-    cx.save();
-    cx.font = `${H * .2}px "Archivo Black", Impact, sans-serif`;
-    cx.textAlign = "center"; cx.textBaseline = "middle";
-    cx.shadowColor = `rgba(244, 196, 0, ${.9 * flick})`; cx.shadowBlur = H * .06;
-    cx.fillStyle = `rgba(255, 216, 25, ${flick})`;
-    cx.fillText("HXK", W / 2, H * .26);
-    cx.restore();
-    // bureau
-    cx.fillStyle = "#08090c"; cx.fillRect(0, H * .82, W, H * .18);
-    // cams
-    const cw = W * .3, ch = cw * .62;
-    cam(W * .12, H * .42, cw, ch, "H", "Nael · Haskouil", "#ff347c", t, 0);
-    cam(W * .58, H * .42, cw, ch, "K", "Luka · Krousti", "#5ce1e6", t, 2);
-    // vu-mètre
-    const bars = 18, bw = W * .006;
-    for (let i = 0; i < bars; i++) {
-      const v = reduce ? .4 : (.25 + .75 * Math.abs(Math.sin(t / (180 + i * 23) + i)));
-      cx.fillStyle = i % 2 ? "#ffffff" : "#f4c400";
-      cx.fillRect(W * .44 + i * bw * 1.8, H * .8 - v * H * .14, bw, v * H * .14);
-    }
-    if (!reduce) requestAnimationFrame(draw);
-  }
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => reduce && draw(0));
-  requestAnimationFrame(draw);
 })();
 </script>
 

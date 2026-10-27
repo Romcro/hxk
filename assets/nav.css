@@ -1,0 +1,22 @@
+/* Barre de navigation commune à toutes les pages du site */
+.hxk-nav {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  background: #141414; border-bottom: 2px solid #f4c400;
+  font-family: "League Spartan", "Helvetica Neue", Arial, sans-serif;
+}
+.hxk-nav .brand { display: flex; align-items: center; }
+.hxk-nav .brand img { height: 34px; width: auto; display: block; }
+.hxk-nav ul { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+.hxk-nav a.link {
+  display: block; padding: 7px 12px; border-radius: 999px; text-decoration: none;
+  color: #ffffff; font-weight: 700; font-size: 15px; line-height: 1;
+}
+.hxk-nav a.link:hover { background: #292929; }
+.hxk-nav a.link[aria-current="page"] { background: #f4c400; color: #141414; }
+.hxk-nav a:focus-visible { outline: 3px solid #f4c400; outline-offset: 2px; }
+@media (max-width: 520px) {
+  .hxk-nav .brand img { height: 26px; }
+  .hxk-nav a.link { padding: 6px 9px; font-size: 14px; }
+}

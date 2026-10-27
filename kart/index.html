@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bonus kart · Haskouil × Krousti</title>
+<meta name="description" content="Mini-jeu bonus : un contre-la-montre en kart avec Haskouil ou Krousti, en clin d'œil à leur victoire chez Battle Kart.">
+<link rel="icon" href="../assets/logo/haskouil.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=League+Spartan:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/nav.css">
+<style>
+/* Bonus kart : contre-la-montre de 3 tours vu du dessus, décor façon jeu de kart (herbe, bordures rouges et blanches, boîtes surprises, plaques de boost). */
+:root {
+  --bg: #141414;
+  --card: #1f1f1f;
+  --card-2: #292929;
+  --line: #3b3b3b;
+  --ink: #ffffff;
+  --ink-dim: #b3b3b3;
+  --yellow: #f4c400;
+  --font-display: "Bagel Fat One", "Arial Black", Impact, sans-serif;
+  --font-body: "League Spartan", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.4; display: flex; flex-direction: column; overflow: hidden; height: 100dvh; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+a { color: var(--yellow); }
+.game { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #3f9a2c; }
+canvas#c { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+/* HUD */
+.hud { position: absolute; top: 10px; left: max(10px, env(safe-area-inset-left, 0px)); z-index: 4; display: flex; gap: 8px; flex-wrap: wrap; pointer-events: none; }
+.hud div { background: rgba(20,20,20,.85); border-radius: 12px; padding: 6px 12px; line-height: 1.1; }
+.hud small { display: block; font-size: 11px; font-weight: 700; color: var(--ink-dim); text-transform: uppercase; letter-spacing: .06em; }
+.hud b { font-family: var(--font-display); font-weight: 400; font-size: 24px; font-variant-numeric: tabular-nums; }
+.hud .lap b { color: var(--yellow); }
+#mini { position: absolute; top: 10px; right: max(10px, env(safe-area-inset-right, 0px)); z-index: 4; width: 150px; height: 100px; background: rgba(20,20,20,.75); border-radius: 12px; pointer-events: none; }
+
+.toast { position: absolute; left: 50%; top: 74px; transform: translateX(-50%); z-index: 6; background: var(--yellow); color: #141414; border-radius: 14px; padding: 8px 14px; text-align: center; pointer-events: none; max-width: min(92%, 340px); box-shadow: 0 6px 0 rgba(0,0,0,.25); }
+.toast b { font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 1; display: block; }
+.toast span { font-weight: 700; font-size: 14px; line-height: 1.2; display: block; margin-top: 2px; }
+.count { position: absolute; inset: 0; z-index: 7; display: grid; place-items: center; pointer-events: none; font-family: var(--font-display); font-size: clamp(80px, 20vw, 180px); color: var(--yellow); text-shadow: 0 8px 0 #141414; }
+
+/* Écrans d'intro et d'arrivée */
+.screen { position: absolute; inset: 0; z-index: 8; display: grid; place-items: center; padding: 16px; background: rgba(20,20,20,.78); overflow-y: auto; }
+.card { background: var(--card); border: 2px solid var(--yellow); border-radius: 18px; padding: 20px; width: min(100%, 480px); text-align: center; }
+.card h1, .card h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 6vw, 46px); margin: 0 0 8px; line-height: 1; }
+.card h1 em, .card h2 em { font-style: normal; color: var(--yellow); }
+.card p { margin: 0 0 14px; color: var(--ink-dim); }
+.card p strong { color: var(--ink); }
+.pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 16px; }
+.pick button { background: var(--card-2); border: 3px solid transparent; border-radius: 14px; padding: 10px 6px 8px; font-weight: 800; }
+.pick button img { width: 72px; height: 72px; object-fit: contain; display: block; margin: 0 auto 4px; }
+.pick button[aria-pressed="true"] { border-color: var(--yellow); background: #3b3b3b; }
+.btn { border: 0; border-radius: 999px; padding: 11px 18px; font-weight: 800; background: var(--yellow); color: #141414; text-decoration: none; display: inline-block; }
+.btn.ghost { background: var(--card-2); color: var(--ink); }
+.row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.keys { font-size: 13px; margin-top: 12px; color: var(--ink-dim); }
+.times { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 4px; font-variant-numeric: tabular-nums; }
+.times li { display: flex; justify-content: space-between; background: var(--card-2); border-radius: 8px; padding: 6px 12px; }
+.times li.best { color: var(--yellow); font-weight: 700; }
+.legal { font-size: 12px; color: var(--ink-dim); margin: 12px 0 0 !important; }
+
+/* Boutons tactiles */
+.pad { position: absolute; z-index: 5; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 calc(14px + env(safe-area-inset-right, 0px)) calc(14px + env(safe-area-inset-bottom, 0px)) calc(14px + env(safe-area-inset-left, 0px)); pointer-events: none; }
+.pad-group { display: flex; gap: 12px; pointer-events: auto; }
+.pad button { width: 72px; height: 72px; border-radius: 50%; background: rgba(20,20,20,.8); border: 2px solid var(--line); font-weight: 800; font-size: 14px; text-transform: uppercase; display: grid; place-items: center; touch-action: none; -webkit-user-select: none; user-select: none; }
+.pad button svg { width: 30px; height: 30px; fill: var(--ink); }
+.pad button.on { background: var(--yellow); border-color: var(--yellow); color: #141414; }
+.pad button.on svg { fill: #141414; }
+.pad .gas { width: 86px; height: 86px; border-color: var(--yellow); }
+@media (max-width: 520px) {
+  #mini { width: 110px; height: 74px; }
+  .hud b { font-size: 20px; }
+  .hud .best { display: none; }
+}
+</style>
+</head>
+<body>
+<nav class="hxk-nav" aria-label="Site">
+  <a class="brand" href="../" aria-label="Accueil"><img src="../assets/logo/lettrage-jaune.svg" alt="Haskouil Krousti"></a>
+  <ul>
+    <li><a class="link" href="../">Accueil</a></li>
+    <li><a class="link" href="../live/">Live</a></li>
+    <li><a class="link" href="../repo/">R.E.P.O</a></li>
+    <li><a class="link" href="./" aria-current="page">Bonus kart</a></li>
+  </ul>
+</nav>
+
+<main class="game" id="game">
+  <canvas id="c" aria-label="Circuit de kart vu du dessus" role="img"></canvas>
+  <div class="hud" aria-live="off">
+    <div class="lap"><small>Tour</small><b id="lap">1/3</b></div>
+    <div><small>Temps</small><b id="time">0,00</b></div>
+    <div class="best"><small>Record</small><b id="best">–</b></div>
+  </div>
+  <canvas id="mini" aria-hidden="true"></canvas>
+  <div class="toast" id="toast" hidden aria-live="polite"><b id="toastB"></b><span id="toastS"></span></div>
+  <div class="count" id="count" hidden aria-live="assertive"></div>
+
+  <div class="pad" id="pad" hidden>
+    <div class="pad-group">
+      <button type="button" data-key="left" aria-label="Tourner à gauche"><svg viewBox="0 0 24 24"><path d="M15.5 4 7 12l8.5 8 1.5-1.5L9.9 12 17 5.5z"/></svg></button>
+      <button type="button" data-key="right" aria-label="Tourner à droite"><svg viewBox="0 0 24 24"><path d="M8.5 4 17 12l-8.5 8L7 18.5l7.1-6.5L7 5.5z"/></svg></button>
+    </div>
+    <div class="pad-group">
+      <button type="button" data-key="down" aria-label="Freiner">Frein</button>
+      <button type="button" data-key="up" class="gas" aria-label="Accélérer">Gaz</button>
+    </div>
+  </div>
+
+  <div class="screen" id="intro">
+    <div class="card">
+      <h1>Bonus <em>kart</em></h1>
+      <p>Le <strong>12 octobre 2026</strong>, le duo a gagné la course des régions chez Battle Kart. À ton tour : 3 tours, chrono en main. Les boîtes <strong>?</strong> donnent un boost et un chiffre du duo.</p>
+      <div class="pick" role="group" aria-label="Choisis ton pilote">
+        <button type="button" data-pilot="haskouil" aria-pressed="true"><img src="../assets/logo/haskouil.svg" alt="">Haskouil</button>
+        <button type="button" data-pilot="krousti" aria-pressed="false"><img src="../assets/logo/krousti.svg" alt="">Krousti</button>
+      </div>
+      <button class="btn" type="button" id="go">C'est parti</button>
+      <p class="keys">Clavier : flèches, ZQSD ou WASD. Sur mobile, les boutons à l'écran.</p>
+      <p class="legal">Mini-jeu bonus, sans lien officiel avec Battle Kart ni aucun jeu vidéo.</p>
+    </div>
+  </div>
+
+  <div class="screen" id="end" hidden>
+    <div class="card">
+      <h2>Arrivée <em>!</em></h2>
+      <p id="endTxt"></p>
+      <ol class="times" id="times"></ol>
+      <div class="row">
+        <button class="btn" type="button" id="again">Rejouer</button>
+        <a class="btn ghost" href="../">Retour à l'accueil</a>
+      </div>
+      <p class="legal">Une collab ? <a href="mailto:haskouilpro@outlook.fr">haskouilpro@outlook.fr</a></p>
+    </div>
+  </div>
+</main>
+
+<script>
+(() => {
+  // Chiffres du press kit, un par boîte, mêmes valeurs que la page d'accueil.
+  const FACTS = [
+    ["447K", "abonnés cumulés sur 4 plateformes"],
+    ["8,7M", "likes cumulés sur TikTok"],
+    ["78 %", "de non-abonnés touchés sur Instagram"],
+    ["160K", "spectateurs uniques sur YouTube"],
+    ["~17K€", "récoltés au ZEvent 2026"],
+    ["+2M", "vues verticales du podcast Reddit"],
+    ["446K", "vues sur un épisode gaming"],
+    ["3,1M", "vues pour le sketch « jetlag »"],
+    ["12/10", "victoire chez Battle Kart"]
+  ];
+  const LAPS = 3;
+
+  // ---------- Piste ----------
+  const WW = 2400, WH = 1650, TW = 150, N = 640;
+  const CTRL = [[300,800],[350,360],[800,220],[1250,380],[1550,250],[2000,300],[2150,700],[1800,900],[1480,820],[1290,1010],[1600,1240],[2050,1300],[1920,1490],[1100,1460],[650,1360],[350,1200]];
+  function spline(pts, per) {
+    const out = [], m = pts.length;
+    for (let i = 0; i < m; i++) {
+      const p0 = pts[(i - 1 + m) % m], p1 = pts[i], p2 = pts[(i + 1) % m], p3 = pts[(i + 2) % m];
+      for (let k = 0; k < per; k++) {
+        const t = k / per, t2 = t * t, t3 = t2 * t;
+        const f = a => 0.5 * (2 * p1[a] + (-p0[a] + p2[a]) * t + (2 * p0[a] - 5 * p1[a] + 4 * p2[a] - p3[a]) * t2 + (-p0[a] + 3 * p1[a] - 3 * p2[a] + p3[a]) * t3);
+        out.push([f(0), f(1)]);
+      }
+    }
+    return out;
+  }
+  function resample(raw, n) {
+    const len = [0];
+    for (let i = 1; i <= raw.length; i++) {
+      const a = raw[i - 1], b = raw[i % raw.length];
+      len.push(len[i - 1] + Math.hypot(b[0] - a[0], b[1] - a[1]));
+    }
+    const total = len[len.length - 1], out = [];
+    let j = 0;
+    for (let i = 0; i < n; i++) {
+      const d = total * i / n;
+      while (len[j + 1] < d) j++;
+      const a = raw[j], b = raw[(j + 1) % raw.length], t = (d - len[j]) / (len[j + 1] - len[j] || 1);
+      out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+    }
+    return out;
+  }
+  const P = resample(spline(CTRL, 40), N);
+  const tangent = i => {
+    const a = P[(i - 2 + N) % N], b = P[(i + 2) % N];
+    const l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    return [(b[0] - a[0]) / l, (b[1] - a[1]) / l];
+  };
+  const trackPath = new Path2D();
+  P.forEach((p, i) => i ? trackPath.lineTo(p[0], p[1]) : trackPath.moveTo(p[0], p[1]));
+  trackPath.closePath();
+  function nearest(x, y, hint) {
+    let best = 0, bd = Infinity;
+    const scan = (from, to) => {
+      for (let k = from; k <= to; k++) {
+        const i = (k + N) % N, dx = P[i][0] - x, dy = P[i][1] - y, d = dx * dx + dy * dy;
+        if (d < bd) { bd = d; best = i; }
+      }
+    };
+    if (hint != null) scan(hint - 40, hint + 40);
+    if (hint == null || bd > 250 * 250) scan(0, N - 1);
+    return { i: best, d: Math.sqrt(bd) };
+  }
+  const at = (i, off) => { const [tx, ty] = tangent(i); return [P[i][0] - ty * off, P[i][1] + tx * off]; };
+
+  // Boîtes surprises (rangées de 3) et plaques de boost
+  const BOXES = [];
+  [90, 250, 410, 545].forEach(i => [-45, 0, 45].forEach(o => { const [x, y] = at(i, o); BOXES.push({ x, y, t: 0 }); }));
+  const BOOSTS = [170, 330, 480].map((i, k) => { const [x, y] = at(i, k % 2 ? 30 : -30); const [tx, ty] = tangent(i); return { x, y, a: Math.atan2(ty, tx) }; });
+
+  // Décor : buissons ronds, tuyaux et piles de pneus loin de la piste
+  let seed = 11;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const BUSH = [], PIPES = [];
+  for (let tries = 0; BUSH.length < 120 && tries < 5000; tries++) {
+    const x = 40 + rnd() * (WW - 80), y = 40 + rnd() * (WH - 80);
+    if (nearest(x, y).d < TW / 2 + 70) continue;
+    BUSH.push({ x, y, r: 20 + rnd() * 22 });
+  }
+  for (let tries = 0; PIPES.length < 8 && tries < 3000; tries++) {
+    const x = 120 + rnd() * (WW - 240), y = 120 + rnd() * (WH - 240);
+    if (nearest(x, y).d < TW / 2 + 110 || BUSH.some(b => Math.hypot(b.x - x, b.y - y) < 70)) continue;
+    PIPES.push({ x, y });
+  }
+
+  // ---------- État ----------
+  const $ = id => document.getElementById(id);
+  const canvas = $("c"), ctx = canvas.getContext("2d");
+  const mini = $("mini"), mctx = mini.getContext("2d");
+  const game = $("game");
+  const HEADS = { haskouil: new Image(), krousti: new Image() };
+  HEADS.haskouil.src = "../assets/logo/haskouil.svg";
+  HEADS.krousti.src = "../assets/logo/krousti.svg";
+  const KART_COL = { haskouil: "#f4c400", krousti: "#ff347c" };
+  let pilot = "haskouil";
+  const startIdx = 4;
+  const car = {};
+  const keys = { up: false, down: false, left: false, right: false };
+  let state = "intro", lap = 1, half = false, lastI = startIdx, tStart = 0, tLap = 0, laps = [], boost = 0, factIdx = 0, now = 0;
+  let cw = 0, ch = 0, dpr = 1, zoom = 1;
+
+  function reset() {
+    const [tx, ty] = tangent(startIdx);
+    Object.assign(car, { x: P[startIdx][0], y: P[startIdx][1], h: Math.atan2(ty, tx), v: 0 });
+    lap = 1; half = false; lastI = startIdx; laps = []; boost = 0;
+    BOXES.forEach(b => b.t = 0);
+    $("lap").textContent = `1/${LAPS}`;
+    $("time").textContent = "0,00";
+  }
+
+  const fmt = s => s.toFixed(2).replace(".", ",");
+  const readBest = () => { try { const v = parseFloat(localStorage.getItem("hxk-kart-best")); return v > 0 ? v : null; } catch (e) { return null; } };
+  const showBest = () => { const b = readBest(); $("best").textContent = b ? fmt(b) : "–"; };
+
+  function resize() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    cw = game.clientWidth; ch = game.clientHeight;
+    canvas.width = cw * dpr; canvas.height = ch * dpr;
+    zoom = Math.max(0.5, Math.min(1.1, Math.min(cw, ch) / 720));
+    const r = mini.getBoundingClientRect();
+    mini.width = r.width * dpr; mini.height = r.height * dpr;
+  }
+  addEventListener("resize", resize);
+
+  // ---------- Contrôles ----------
+  const coarse = matchMedia("(pointer: coarse)").matches;
+  const showPad = () => { $("pad").hidden = false; };
+  if (coarse) showPad();
+  addEventListener("touchstart", showPad, { once: true, passive: true });
+
+  const KEYMAP = { ArrowUp: "up", KeyW: "up", KeyZ: "up", ArrowDown: "down", KeyS: "down", ArrowLeft: "left", KeyA: "left", KeyQ: "left", ArrowRight: "right", KeyD: "right" };
+  addEventListener("keydown", e => {
+    const k = KEYMAP[e.code];
+    if (k && (state === "race" || state === "count")) { keys[k] = true; e.preventDefault(); }
+  });
+  addEventListener("keyup", e => { const k = KEYMAP[e.code]; if (k) keys[k] = false; });
+  addEventListener("blur", () => { for (const k in keys) keys[k] = false; });
+  document.querySelectorAll(".pad button").forEach(b => {
+    const k = b.dataset.key;
+    const on = e => { e.preventDefault(); keys[k] = true; b.classList.add("on"); try { b.setPointerCapture(e.pointerId); } catch (_) {} };
+    const off = () => { keys[k] = false; b.classList.remove("on"); };
+    b.addEventListener("pointerdown", on);
+    b.addEventListener("pointerup", off);
+    b.addEventListener("pointercancel", off);
+    b.addEventListener("lostpointercapture", off);
+    b.addEventListener("contextmenu", e => e.preventDefault());
+  });
+
+  document.querySelectorAll("[data-pilot]").forEach(b => b.addEventListener("click", () => {
+    pilot = b.dataset.pilot;
+    document.querySelectorAll("[data-pilot]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  }));
+
+  function countdown() {
+    reset();
+    $("intro").hidden = true; $("end").hidden = true;
+    state = "count";
+    const el = $("count");
+    el.hidden = false;
+    let n = 3;
+    el.textContent = n;
+    const tick = setInterval(() => {
+      n--;
+      if (n > 0) el.textContent = n;
+      else if (n === 0) { el.textContent = "GO !"; state = "race"; tStart = tLap = performance.now(); }
+      else { clearInterval(tick); el.hidden = true; }
+    }, 700);
+  }
+  $("go").addEventListener("click", countdown);
+  $("again").addEventListener("click", countdown);
+
+  let toastTimer = 0;
+  function toast(b, s) {
+    $("toastB").textContent = b; $("toastS").textContent = s;
+    $("toast").hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => $("toast").hidden = true, 2200);
+  }
+
+  function finish() {
+    state = "end";
+    const total = (performance.now() - tStart) / 1000;
+    const prev = readBest();
+    const rec = !prev || total < prev;
+    if (rec) { try { localStorage.setItem("hxk-kart-best", total); } catch (e) {} }
+    const bestLap = Math.min(...laps);
+    $("times").innerHTML = laps.map((t, i) => `<li${t === bestLap ? ' class="best"' : ""}><span>Tour ${i + 1}</span><span>${fmt(t)} s</span></li>`).join("");
+    $("endTxt").innerHTML = `${pilot === "haskouil" ? "Haskouil" : "Krousti"} boucle les 3 tours en <strong>${fmt(total)} s</strong>. ${rec ? (prev ? "Nouveau record !" : "Premier record posé.") : `Record à battre : ${fmt(prev)} s.`}`;
+    showBest();
+    setTimeout(() => { $("end").hidden = false; $("again").focus(); }, 600);
+  }
+
+  // ---------- Physique ----------
+  const ACC = 460, BRAKE = 900, DRAG = 170, MAXV = 600, BOOSTV = 900, GRASSV = 220, REV = 170, STEER = 2.8;
+  function step(dt) {
+    const live = state === "race";
+    let thr = live ? (keys.up ? 1 : 0) - (keys.down ? 1 : 0) : 0;
+    const steer = live ? (keys.right ? 1 : 0) - (keys.left ? 1 : 0) : 0;
+    const near = nearest(car.x, car.y, lastI);
+    const onTrack = near.d < TW / 2 + 8;
+    if (boost > 0) { boost -= dt; if (live) thr = Math.max(thr, 1); }
+    const acc = boost > 0 ? ACC * 2.2 : ACC;
+    if (thr > 0) car.v += (car.v < 0 ? BRAKE : acc) * dt;
+    else if (thr < 0) car.v -= (car.v > 0 ? BRAKE : ACC * 0.6) * dt;
+    else car.v -= Math.sign(car.v) * Math.min(Math.abs(car.v), DRAG * dt);
+    const max = boost > 0 ? BOOSTV : onTrack ? MAXV : GRASSV;
+    if (car.v > max) car.v -= (car.v - max) * Math.min(1, 3.5 * dt);
+    if (car.v < -REV) car.v = -REV;
+    const grip = Math.min(1, Math.abs(car.v) / 150) * (onTrack ? 1 : 0.8);
+    car.h += steer * STEER * grip * Math.sign(car.v) * dt;
+    car.x += Math.cos(car.h) * car.v * dt;
+    car.y += Math.sin(car.h) * car.v * dt;
+    const m = 30;
+    if (car.x < m || car.x > WW - m || car.y < m || car.y > WH - m) {
+      car.x = Math.max(m, Math.min(WW - m, car.x));
+      car.y = Math.max(m, Math.min(WH - m, car.y));
+      car.v *= -0.3;
+    }
+    if (!live) { lastI = near.i; return; }
+
+    // Tours : il faut passer la mi-course avant de recouper la ligne
+    if (near.i > N * 0.45 && near.i < N * 0.55) half = true;
+    if (half && lastI > N * 0.85 && near.i < N * 0.15) {
+      const t = performance.now();
+      laps.push((t - tLap) / 1000);
+      tLap = t; half = false;
+      if (laps.length >= LAPS) { lastI = near.i; finish(); return; }
+      lap = laps.length + 1;
+      $("lap").textContent = `${lap}/${LAPS}`;
+      toast(`Tour ${lap}`, lap === LAPS ? "Dernier tour !" : "Continue comme ça");
+    }
+    lastI = near.i;
+
+    for (const b of BOXES) {
+      if (b.t > 0) { b.t -= dt; continue; }
+      if (Math.hypot(b.x - car.x, b.y - car.y) < 36) {
+        b.t = 4; boost = 1.1;
+        const f = FACTS[factIdx++ % FACTS.length];
+        toast(f[0], f[1]);
+      }
+    }
+    for (const p of BOOSTS) if (Math.hypot(p.x - car.x, p.y - car.y) < 40) boost = Math.max(boost, 0.7);
+  }
+
+  // ---------- Rendu ----------
+  function drawWorld() {
+    // herbe à bandes
+    ctx.fillStyle = "#3f9a2c"; ctx.fillRect(-400, -400, WW + 800, WH + 800);
+    ctx.fillStyle = "#4cae35";
+    for (let y = 0; y < WH; y += 160) ctx.fillRect(0, y, WW, 80);
+    ctx.strokeStyle = "#2d7a1f"; ctx.lineWidth = 10; ctx.strokeRect(0, 0, WW, WH);
+
+    // bordures rouges et blanches, puis asphalte
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = TW + 26; ctx.stroke(trackPath);
+    ctx.save(); ctx.lineCap = "butt"; ctx.setLineDash([34, 34]); ctx.strokeStyle = "#e5262b"; ctx.stroke(trackPath); ctx.restore();
+    ctx.strokeStyle = "#6c6f75"; ctx.lineWidth = TW; ctx.stroke(trackPath);
+    ctx.save(); ctx.setLineDash([26, 30]); ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 4; ctx.stroke(trackPath); ctx.restore();
+
+    // ligne de départ en damier
+    const [tx, ty] = tangent(0), nx = -ty, ny = tx, sq = TW / 8;
+    ctx.save(); ctx.translate(P[0][0], P[0][1]); ctx.rotate(Math.atan2(ny, nx));
+    for (let r = 0; r < 2; r++) for (let c = 0; c < 8; c++) {
+      ctx.fillStyle = (r + c) % 2 ? "#141414" : "#ffffff";
+      ctx.fillRect(-TW / 2 + c * sq, -sq + r * sq, sq, sq);
+    }
+    ctx.restore();
+    // arche de départ
+    const [ax, ay] = [P[0][0] + nx * (TW / 2 + 24), P[0][1] + ny * (TW / 2 + 24)], [bx, by] = [P[0][0] - nx * (TW / 2 + 24), P[0][1] - ny * (TW / 2 + 24)];
+    ctx.fillStyle = "#141414"; [[ax, ay], [bx, by]].forEach(([x, y]) => { ctx.beginPath(); ctx.arc(x, y, 12, 0, 7); ctx.fill(); });
+
+    // plaques de boost (chevrons jaunes)
+    for (const p of BOOSTS) {
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
+      ctx.fillStyle = "#f4c400"; ctx.fillRect(-30, -22, 60, 44);
+      ctx.fillStyle = "#141414";
+      for (let k = -1; k <= 1; k++) { ctx.beginPath(); ctx.moveTo(-6 + k * 16, -14); ctx.lineTo(4 + k * 16, 0); ctx.lineTo(-6 + k * 16, 14); ctx.lineTo(-12 + k * 16, 14); ctx.lineTo(-2 + k * 16, 0); ctx.lineTo(-12 + k * 16, -14); ctx.fill(); }
+      ctx.restore();
+    }
+
+    // décor
+    for (const p of PIPES) {
+      ctx.fillStyle = "#1e7d2a"; ctx.beginPath(); ctx.arc(p.x, p.y, 34, 0, 7); ctx.fill();
+      ctx.fillStyle = "#30b33f"; ctx.beginPath(); ctx.arc(p.x, p.y, 28, 0, 7); ctx.fill();
+      ctx.fillStyle = "#0b3d12"; ctx.beginPath(); ctx.arc(p.x, p.y, 18, 0, 7); ctx.fill();
+    }
+    for (const b of BUSH) {
+      ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.beginPath(); ctx.arc(b.x + 5, b.y + 7, b.r, 0, 7); ctx.fill();
+      ctx.fillStyle = "#2b8a24"; ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, 7); ctx.fill();
+      ctx.fillStyle = "#5fc744"; ctx.beginPath(); ctx.arc(b.x - b.r * .3, b.y - b.r * .3, b.r * .45, 0, 7); ctx.fill();
+    }
+
+    // boîtes surprises arc-en-ciel
+    const bob = Math.sin(now / 260) * 3;
+    for (const b of BOXES) {
+      if (b.t > 0) continue;
+      ctx.save(); ctx.translate(b.x, b.y + bob); ctx.rotate(now / 900);
+      const g = ctx.createLinearGradient(-18, -18, 18, 18);
+      ["#ff347c", "#f4c400", "#5ce1e6", "#a56bff"].forEach((c, i) => g.addColorStop(i / 3, c));
+      ctx.fillStyle = g; ctx.globalAlpha = .92;
+      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-18, -18, 36, 36, 7) : ctx.rect(-18, -18, 36, 36); ctx.fill();
+      ctx.globalAlpha = 1; ctx.strokeStyle = "#fff"; ctx.lineWidth = 3; ctx.stroke();
+      ctx.rotate(-now / 900);
+      ctx.fillStyle = "#fff"; ctx.font = "bold 24px 'Bagel Fat One', Arial Black, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("?", 0, 2);
+      ctx.restore();
+    }
+  }
+
+  function drawKart() {
+    ctx.save(); ctx.translate(car.x, car.y);
+    ctx.save(); ctx.rotate(car.h);
+    if (boost > 0) { // flammes de boost
+      ctx.fillStyle = "#ff8a00"; ctx.beginPath(); ctx.moveTo(-26, -8); ctx.lineTo(-44 - Math.random() * 12, 0); ctx.lineTo(-26, 8); ctx.fill();
+      ctx.fillStyle = "#f4c400"; ctx.beginPath(); ctx.moveTo(-26, -4); ctx.lineTo(-36 - Math.random() * 6, 0); ctx.lineTo(-26, 4); ctx.fill();
+    }
+    ctx.fillStyle = "rgba(0,0,0,.25)"; ctx.fillRect(-24, -18, 52, 40);
+    ctx.fillStyle = "#141414";
+    [[-18, -20], [10, -20], [-18, 12], [10, 12]].forEach(([x, y]) => ctx.fillRect(x, y, 14, 8));
+    ctx.fillStyle = KART_COL[pilot];
+    ctx.beginPath(); ctx.moveTo(-24, -13); ctx.lineTo(18, -11); ctx.lineTo(28, 0); ctx.lineTo(18, 11); ctx.lineTo(-24, 13); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = "#141414"; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = "#141414"; ctx.fillRect(-26, -12, 5, 24);
+    ctx.restore();
+    // tête du pilote, toujours droite
+    const img = HEADS[pilot];
+    if (img.complete && img.naturalWidth) ctx.drawImage(img, -26, -46, 52, 54);
+    else { ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(0, -20, 18, 0, 7); ctx.fill(); }
+    ctx.restore();
+  }
+
+  function drawMini() {
+    const w = mini.width, h = mini.height;
+    mctx.clearRect(0, 0, w, h);
+    const s = Math.min(w / WW, h / WH) * 0.9, ox = (w - WW * s) / 2, oy = (h - WH * s) / 2;
+    mctx.save(); mctx.translate(ox, oy); mctx.scale(s, s);
+    mctx.strokeStyle = "#b3b3b3"; mctx.lineWidth = TW * .7; mctx.lineJoin = "round"; mctx.stroke(trackPath);
+    mctx.fillStyle = KART_COL[pilot]; mctx.beginPath(); mctx.arc(car.x, car.y, 70, 0, 7); mctx.fill();
+    mctx.restore();
+  }
+
+  let last = performance.now();
+  function frame(t) {
+    now = t;
+    const dt = Math.min(0.033, (t - last) / 1000); last = t;
+    step(dt);
+    if (state === "race") $("time").textContent = fmt((t - tStart) / 1000);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cw, ch);
+    const lead = Math.max(0, car.v) * 0.25;
+    const cx = car.x + Math.cos(car.h) * lead, cy = car.y + Math.sin(car.h) * lead;
+    ctx.save();
+    ctx.translate(cw / 2, ch / 2); ctx.scale(zoom, zoom); ctx.translate(-cx, -cy);
+    drawWorld();
+    drawKart();
+    ctx.restore();
+    drawMini();
+    requestAnimationFrame(frame);
+  }
+
+  reset();
+  resize();
+  showBest();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
